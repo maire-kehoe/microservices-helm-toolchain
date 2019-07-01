@@ -75,10 +75,13 @@ stages:
   jobs:
   - name: Staging gate
     type: tester
-    script: |-
-      #!/bin/bash
-      #set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_umbrella_gate.sh")
+    script:
+      $ref: https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_umbrella_gate.sh
+      $refType: text
+    # script: |-
+    #   #!/bin/bash
+    #   #set -x
+    #   source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_umbrella_gate.sh")
   - name: Config service
     type: deployer
     target:
