@@ -63,7 +63,7 @@ services:
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'            
           UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
-        execute: true
+        execute: false
   orders-api-repo:
     service_id: hostedgit
     parameters:
@@ -92,7 +92,7 @@ services:
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'          
           UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
-        execute: true
+        execute: false
   ui-repo:
     service_id: hostedgit
     parameters:
@@ -123,7 +123,7 @@ services:
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'            
           UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
-        execute: true
+        execute: false
   tekton-pipelines-repo:
     service_id: githubconsolidated
     parameters:
