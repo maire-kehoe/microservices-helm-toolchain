@@ -1,0 +1,178 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: pipeline-ms-k8s
+spec:
+  params:
+    - name: pipeline-pvc
+      description: the pipeline pvc name
+    - name: repository
+      description: the git repo
+    - name: branch
+      description: the branch for the git repo
+    - name: clusterTargetNamespace     
+    - name: deploymentFile
+      default: deployment.yml
+  resources:
+  - name: app-image
+    type: image
+  - name: target-cluster
+    type: cluster
+  tasks:
+    - name: clone-task
+      taskRef:
+        name: clone-repo-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: repository
+          value: $(params.repository)
+        - name: branch
+          value: $(params.branch)
+    - name: containerize-task
+      runAfter: [clone-task]
+      taskRef:
+        name: containerize-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: additionalTags
+          value: '1.0.0-dev'
+        - name: additionalTagsScript
+          value: |
+            # Include the clone task output variables in the environment
+            source /artifacts/build.properties
+            # The script is providing tag(s) as output
+            # But logs can be written as error stderr
+            echo "Providing an image tag including git branch and commit" >&2
+            # Add a specific tag with branch and commit
+            echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
+      resources:          
+        outputs:
+          - name: builtImage
+            resource: app-image
+    - name: va-task
+      taskRef:
+        name: vulnerability-advisor-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: scanReportFile
+          value: 'app-image-va-report.json'
+        # - name: maxIteration
+        #   value: '5'
+        # - name: sleepTime
+        #   value: '3'
+        # - name: failOnScannedIssues          
+        #   value: 'false'
+      resources:          
+        inputs:
+          - name: image
+            resource: app-image
+            from:
+              - containerize-task
+    - name: cluster-setup-task
+      taskRef:
+        name: fetch-iks-cluster-config
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: clusterPipelineResourcesDirectoryFallback
+          value: .tekton-clusters
+        - name: clusterAndWorkerNodesJsonExport
+          value: .tekton-clusters
+      resources:          
+        inputs:
+          - name: cluster
+            resource: target-cluster
+        outputs:
+          - name: cluster
+            resource: target-cluster
+    - name: kubernetes-deployment-validation
+      runAfter: [containerize-task]
+      taskRef:
+        name: validate-k8s-deployment-file
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: deploymentFile
+          value: $(params.deploymentFile)
+      resources:          
+        inputs:
+          - name: image
+            resource: app-image
+            from:
+              - containerize-task
+    - name: kubernetes-environment-check
+      runAfter: [cluster-setup-task]
+      taskRef:
+        name: validate-k8s-environment
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: task-pvc-mountpath
+          value: /pipelinerun
+        - name: clusterPipelineResourcesDirectory
+          value: /pipelinerun/.tekton-clusters
+        - name: namespace
+          value: $(params.clusterTargetNamespace)
+      resources:          
+        inputs:
+          - name: cluster
+            resource: target-cluster
+          - name: image
+            resource: app-image
+            from:
+              - containerize-task
+    - name: kubectl-deployment
+      runAfter: [kubernetes-environment-check, kubernetes-deployment-validation]
+      taskRef:
+        name: kubernetes-contextual-execution
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: task-pvc-mountpath
+          value: /pipelinerun
+        - name: clusterPipelineResourcesDirectory
+          value: /pipelinerun/.tekton-clusters
+        - name: script
+          value: |
+            echo "DEPLOYING using manifest"
+            CLUSTER_NAMESPACE=$(params.clusterTargetNamespace)
+            set -x
+            kubectl apply --namespace $CLUSTER_NAMESPACE -f $(params.deploymentFile)
+            set +x
+            echo "=========================================================="
+            DEPLOYMENT_DOC_INDEX=$(yq read --doc "*" --tojson $(params.deploymentFile) | jq -r 'to_entries | .[] | select(.value.kind | ascii_downcase=="deployment") | .key')
+            DEPLOYMENT_NAME=$(yq read --doc ${DEPLOYMENT_DOC_INDEX} $(params.deploymentFile) metadata.name)
+            echo -e "CHECKING deployment rollout of ${DEPLOYMENT_NAME}"
+            echo ""
+            set -x
+            if kubectl rollout status deploy/${DEPLOYMENT_NAME} --watch=true --timeout=150s --namespace $CLUSTER_NAMESPACE; then
+              STATUS="pass"
+            else
+              STATUS="fail"
+            fi
+            set +x
+            if [ "$STATUS" == "fail" ]; then
+              echo "DEPLOYMENT FAILED"
+              exit 1
+            fi
+
+            # Find the cluster information for ingress or workers public ip
+            TARGET_CLUSTER=$( yq read $KUBECONFIG clusters[0].name | awk -F/ '{print $1}' )
+
+            SERVICE_NAME=$(kubectl get services --namespace ${CLUSTER_NAMESPACE} -o json | jq -r ' .items[] | select (.spec.selector.app=="'"${DEPLOYMENT_NAME}"'") | .metadata.name ')
+            if [ "$SERVICE_NAME" ]; then
+              PORT=$( kubectl get services --namespace ${CLUSTER_NAMESPACE} | grep ${SERVICE_NAME} | sed 's/.*:\([0-9]*\).*/\1/g' )
+              IP_ADDR=$(jq -r '.[0].publicIP' /pipelinerun/.tekton-clusters/${TARGET_CLUSTER}/${TARGET_CLUSTER}-workers.json)
+              echo -e "VIEW THE APPLICATION AT: http://${IP_ADDR}:${PORT}"
+            else
+              echo "No service found for $DEPLOYMENT_NAME"
+            fi
+      resources:          
+        inputs:
+          - name: cluster
+            resource: target-cluster
+            from:
+              - cluster-setup-task

@@ -17,6 +17,8 @@ template:
     - orders-api-repo
     - ui-repo
     - umbrella-repo
+    - tekton-task-repo
+    - tekton-pipeline-repo
   info:
     git url: >-
       [https://github.com/open-toolchain/microservices-helm-toolchain](https://github.com/open-toolchain/microservices-helm-toolchain)
@@ -41,12 +43,17 @@ services:
     parameters:
       services:
         - catalog-api-repo
+        - tekton-pipeline-repo
+        - tekton-task-repo
       name: 'catalog-api-{{timestamp}}'
+      type: tekton
       configuration:
         content:
-          $ref: ci.pipeline.yml
-          $refType: text
+          $text: ci.pipeline.yml
         env:
+          tekton-pipeline-repo: tekton-pipeline-repo
+          tekton-task-repo: tekton-task-repo
+          source-repo: '{{services.catalog-api-repo.parameters.repo_url}}' 
           POLICY_NAME: '[catalog-api] PUBLISH Component Chart Checks'
           GIT_REPO: catalog-api-repo
           GIT_BRANCH: master
@@ -73,7 +80,7 @@ services:
       name: 'orders-api-{{timestamp}}'
       configuration:
         content:
-          $ref: ci.pipeline.yml
+          $ref: ci.pipeline.classic.yml
           $refType: text
         env:
           POLICY_NAME: '[orders-api] PUBLISH Component Chart Checks'
@@ -103,7 +110,7 @@ services:
       ui-pipeline: true
       configuration:
         content:
-          $ref: ci.pipeline.yml
+          $ref: ci.pipeline.classic.yml
           $refType: text
         env:
           POLICY_NAME: '[ui] PUBLISH Component Chart Checks'
@@ -117,6 +124,22 @@ services:
           API_KEY: '{{form.pipeline.parameters.api-key}}'            
           UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
         execute: true
+  tekton-pipelines-repo:
+    service_id: githubconsolidated
+    parameters:
+      repo_name: tekton-pipelines
+      repo_url: https://github.com/hmagph/microservices-helm-toolchain
+      type: link
+      has_issues: false
+      enable_traceability: false
+  tekton-task-repo:
+    service_id: githubconsolidated
+    parameters:
+      repo_name: tekton-catalog
+      repo_url: https://github.com/open-toolchain/tekton-catalog
+      type: link
+      has_issues: false
+      enable_traceability: false
   umbrella-repo:
     service_id: hostedgit
     parameters:

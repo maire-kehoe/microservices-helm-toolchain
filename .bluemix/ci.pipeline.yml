@@ -1,142 +1,50 @@
----
-defaultBaseImageVersion: latest
+inputs:
+- branch: master
+  path: .tekton/ci
+  type: git
+  service: ${tekton-pipeline-repo}
+- branch: master
+  path: git
+  type: git
+  service: ${tekton-task-repo}
+- branch: master
+  path: container-registry
+  type: git
+  service: ${tekton-task-repo}
+- branch: master
+  path: kubernetes-service
+  type: git
+  service: ${tekton-task-repo}
 properties:
-- name: HELM_VERSION
-  value: ''
-  type: text
-- name: IBM_CLOUD_API_KEY
-  value: ${API_KEY}
-  type: secure
-- name: APP_NAME
-  value: ${APP_NAME}
-  type: text
-stages:
-- name: BUILD
-  inputs:
-  - type: git
-    branch: ${GIT_BRANCH}
-    service: ${GIT_REPO}
-  triggers:
-  - type: commit
-  properties:
-  jobs:
-  - name: Fetch code
-    type: builder
-    artifact_dir: ''
-    build_type: shell
-    script: |+
-      #!/bin/bash
-      # set -x
-      cp -R -n ./ $ARCHIVE_DIR/ || true
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/fetch_git_creds.sh")
-      # record Insights information
-      BUILD_STATUS=pass
-      ibmcloud login --apikey $IBM_CLOUD_API_KEY --no-region
-      ibmcloud doi publishbuildrecord --logicalappname="$APP_NAME" --buildnumber=$BUILD_NUMBER --branch=$GIT_BRANCH --repositoryurl=$GIT_URL --commitid=$GIT_COMMIT --status=$BUILD_STATUS
-  - name: Unit Tests
-    type: tester
-    script: |-
-      #!/bin/bash
-      # set -x
-      if [ -f ./tests/run-tests.sh ]; then
-        source ./tests/run-tests.sh
-      else
-        echo "Test runner script not found: ./tests/run-tests.sh"
-      fi
-- name: CONTAINERIZE
-  inputs:
-  - type: job
-    stage: BUILD
-    job: Fetch code
-  triggers:
-  - type: stage
-  properties:
-  - name: build_properties
-    value: build.properties
-    type: file
-  - name: PIPELINE_IMAGE_URL
-    value: undefined
-    type: text
-  jobs:
-  - name: Pre-build check
-    type: builder
-    build_type: cr
-    artifact_dir: ''
-    target:
-      region_id: ${REGISTRY_REGION_ID}
-      api_key: ${API_KEY}
-    namespace: ${REGISTRY_NAMESPACE}
-    image_name: ${IMAGE_NAME}
-    script: |-
-      #!/bin/bash
-      #set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_prebuild.sh")  
-  - name: Build container image
-    type: builder
-    build_type: cr
-    artifact_dir: output
-    target:
-      region_id: ${REGISTRY_REGION_ID}
-      api_key: ${API_KEY}
-    namespace: ${REGISTRY_NAMESPACE}
-    image_name: ${IMAGE_NAME}
-    script: |
-      #!/bin/bash
-      #set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/build_image.sh")
-  - name: Vulnerability Advisor
-    type: tester
-    test_type: vulnerabilityadvisor
-    fail_stage: false
-    target:
-      region_id: ${REGISTRY_REGION_ID}
-      api_key: ${API_KEY}
-    script: |
-      #!/bin/bash
-      #  set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_vulnerabilities.sh")
-- name: PUBLISH
-  inputs:
-  - type: job
-    stage: CONTAINERIZE
-    job: Build container image
-    dir_name: null
-  triggers:
-  - type: stage
-  properties:
-  - name: LOGICAL_ENV_NAME
-    value: PUBLISH
-    type: text
-  - name: build_properties
-    value: build.properties
-    type: file
-  - name: UMBRELLA_REPO_NAME
-    value: ${UMBRELLA_REPO_NAME}
-    type: text
-  - name: POLICY_NAME
-    value: ${POLICY_NAME}
-    type: text
-  - name: CHART_ROOT
-    value: chart
-    type: text
-  jobs:
-  - name: Publish Gate
-    type: tester
-    test_type: simple
-    script: |-
-      #!/bin/bash
-      # set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
-  - name: Publish component chart
-    type: builder
-    build_type: cr
-    artifact_dir: ''
-    target:
-      region_id: ${REGISTRY_REGION_ID}
-      api_key: ${API_KEY}
-    namespace: ${REGISTRY_NAMESPACE}
-    image_name: ${IMAGE_NAME}
-    script: |-
-      #!/bin/bash
-      # set -x
-      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
+- name: apikey
+  type: SECURE
+  value: ""
+- name: clusterName
+  type: TEXT
+  value: mycluster
+- name: defaultBranch
+  type: TEXT
+  value: master
+- name: imageName
+  type: TEXT
+  value: my-tekton-built-image
+- name: manualRepository
+  type: TEXT
+  value: ${manualRepository}
+- name: registryDomain
+  type: TEXT
+  value: us.icr.io
+- name: registryNamespace
+  type: TEXT
+  value: bjn-tkn-ns
+triggers:
+- eventListener: event-listener-manual-run
+  name: Manual Trigger
+  type: manual
+- branch: master
+  eventListener: event-listener-git-commit
+  events:
+    push: true
+  name: Git Trigger
+  type: git
+  service: ${source-repo}
