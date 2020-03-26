@@ -53,7 +53,8 @@ services:
         env:
           tekton-pipeline-repo: tekton-pipeline-repo
           tekton-task-repo: tekton-task-repo
-          source-repo: '{{services.catalog-api-repo.parameters.repo_url}}' 
+          source-repo: catalog-api-repo          
+          source-repo-url: '{{services.catalog-api-repo.parameters.repo_url}}' 
           POLICY_NAME: '[catalog-api] PUBLISH Component Chart Checks'
           GIT_REPO: catalog-api-repo
           GIT_BRANCH: master
