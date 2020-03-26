@@ -1,6 +1,6 @@
 inputs:
 - branch: master
-  path: .tekton/ci
+  path: '.tekton/ci'
   type: git
   service: ${tekton-pipeline-repo}
 - branch: master
@@ -30,7 +30,7 @@ properties:
   value: my-tekton-built-image
 - name: manualRepository
   type: TEXT
-  value: ${manualRepository}
+  value: ${source-repo}
 - name: registryDomain
   type: TEXT
   value: us.icr.io
