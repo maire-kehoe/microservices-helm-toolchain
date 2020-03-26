@@ -124,7 +124,7 @@ services:
           API_KEY: '{{form.pipeline.parameters.api-key}}'            
           UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
         execute: false
-  tekton-pipelines-repo:
+  tekton-pipeline-repo:
     service_id: githubconsolidated
     parameters:
       repo_name: tekton-pipelines
