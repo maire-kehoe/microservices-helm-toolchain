@@ -1,6 +1,6 @@
 inputs:
 - branch: master
-  path: ".tekton/ci"
+  path: .tekton-ci
   type: git
   service: ${tekton-pipeline-repo}
 - branch: master
