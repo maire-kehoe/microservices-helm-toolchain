@@ -1,6 +1,6 @@
 inputs:
 - branch: master
-  path: .tekton-ci
+  path: ".tekton/ci"
   type: git
   service: ${tekton-pipeline-repo}
 - branch: master
@@ -18,25 +18,25 @@ inputs:
 properties:
 - name: apikey
   type: SECURE
-  value: ""
+  value: ${API_KEY}
 - name: clusterName
   type: TEXT
   value: mycluster
-- name: defaultBranch
+- name: branch
   type: TEXT
-  value: master
+  value: ${GIT_BRANCH}
 - name: imageName
   type: TEXT
-  value: my-tekton-built-image
-- name: manualRepository
+  value: ${IMAGE_NAME}
+- name: repository
   type: TEXT
   value: ${source-repo-url}
 - name: registryDomain
   type: TEXT
-  value: us.icr.io
+  value: ${REGISTRY_REGION_ID}
 - name: registryNamespace
   type: TEXT
-  value: bjn-tkn-ns
+  value: ${REGISTRY_NAMESPACE}
 triggers:
 - eventListener: event-listener-manual-run
   name: Manual Trigger

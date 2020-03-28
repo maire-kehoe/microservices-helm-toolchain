@@ -29,8 +29,15 @@ spec:
           value: $(params.repository)
         - name: branch
           value: $(params.branch)
-    - name: containerize-task
+    - name: read-run-properties-task
       runAfter: [clone-task]
+      taskRef:
+        name: read-run-properties-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+    - name: containerize-task
+      runAfter: [read-run-properties-task]
       taskRef:
         name: containerize-task
       params:
@@ -44,9 +51,23 @@ spec:
             source /artifacts/build.properties
             # The script is providing tag(s) as output
             # But logs can be written as error stderr
-            echo "Providing an image tag including git branch and commit" >&2
+            # echo "Providing an image tag including git branch and commit" >&2
             # Add a specific tag with branch and commit
-            echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
+            # echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
+
+            # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
+            # e.g. 3-master-50da6912-20181123114435
+            # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
+
+            TIMESTAMP=$( date -u "+%Y%m%d%H%M%S")
+            IMAGE_TAG=${TIMESTAMP}
+            if [ ! -z "${GIT_COMMIT}" ]; then
+              GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 ) 
+              IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
+            fi
+            if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
+            IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
+            echo ${IMAGE_TAG}
       resources:          
         outputs:
           - name: builtImage

@@ -90,25 +90,24 @@ metadata:
 spec:
   params:
     - name: repository
-      value: "$(params.manualRepository)"
+      value: "$(params.repository)"
     - name: branch
-      value: "$(params.defaultBranch)"
+      value: "$(params.branch)"
     - name: triggerEvent
       value: manual
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
-  name: trigger-binding-github-commit
+  name: trigger-binding-gitlab-commit
 spec:
   params:
     - name: repository
-      value: "$(event.repository.url)"
+      value: "$(params.repository)" # "$(event.repository.url)"
     - name: revision
-      value: "$(event.head_commit.id)"
+      value: "$(event.checkout_sha)" # "$(event.head_commit.id)"
     - name: branch
-      value: "$(params.defaultBranch)"
-      # value: "$(event.ref)"
+      value: "$(params.branch)" # value: "$(event.ref)"
     - name: triggerEvent
       value: "git-commit"
 ---
