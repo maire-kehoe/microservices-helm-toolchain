@@ -57,6 +57,9 @@ spec:
           echo "TRIGGER_TYPE=${TRIGGER_TYPE}" >> /artifacts/build.properties
           echo "TRIGGER_NAME=${TRIGGER_NAME}" >> /artifacts/build.properties
           echo "TRIGGERED_BY=${TRIGGERED_BY}" >> /artifacts/build.properties
+
+          echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
+          cat /artifacts/build.properties | grep -v -i password
       volumeMounts:
         - mountPath: /steps
           name: steps-volume
