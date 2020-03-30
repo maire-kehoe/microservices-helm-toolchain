@@ -113,6 +113,7 @@ spec:
           pwd
           ls -al
           env
+          ibmcloud plugin list
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -122,6 +123,7 @@ spec:
           pwd
           ls -al
           env
+          ibmcloud plugin list
           source ./artifacts/build.properties
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
