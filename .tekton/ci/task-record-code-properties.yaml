@@ -11,29 +11,20 @@ spec:
         description: Logical application name for DevOps Insights
   steps:
     - name: record-git-creds
-      # image: alpine/git
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       command: ["/bin/bash", "-c"]
       args:
         - |
           set -e -o pipefail
+          source ./build.properties
+          env
           ls -al
           # Record git info to later contribute to umbrella chart repo
+          # GIT_COMMIT=$(git rev-parse HEAD)
+          # GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          # GIT_REPO_NAME=$(basename `git rev-parse --show-toplevel`)
           GIT_REMOTE_URL=$( git config --get remote.origin.url )
-          echo $GIT_REMOTE_URL
-          echo "---"
-          git rev-parse HEAD
-          GIT_COMMIT=$(git rev-parse HEAD)
-          echo $GIT_COMMIT
-          echo "---"
-          git rev-parse --abbrev-ref HEAD
-          GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          echo "GIT_BRANCH=${GIT_BRANCH}"
-          echo "---"
-          GIT_REPO_NAME=$(basename `git rev-parse --show-toplevel`)
-          echo "GIT_REPO_NAME=${GIT_REPO_NAME}"
-          echo "---"
           GIT_USER=$( echo ${GIT_REMOTE_URL} | cut -d/ -f3 | cut -d: -f1 )
           GIT_PASSWORD=$( echo ${GIT_REMOTE_URL} | cut -d: -f3 | cut -d@ -f1 )
           # echo "GIT_URL=${GIT_URL}" >> ./build.properties
