@@ -17,6 +17,7 @@ spec:
       args:
         - |
           set -e -o pipefail
+          ls -al
           # Record git info to later contribute to umbrella chart repo
           GIT_REMOTE_URL=$( git config --get remote.origin.url )
           echo $GIT_REMOTE_URL
