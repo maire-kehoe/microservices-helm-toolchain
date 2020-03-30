@@ -13,6 +13,8 @@ spec:
     - name: clusterTargetNamespace     
     - name: deploymentFile
       default: deployment.yml
+    - name: appName
+      description: the logical name of the app
   resources:
   - name: app-image
     type: image
@@ -36,6 +38,8 @@ spec:
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
+        - name: appName
+          value: $(params.appName)
     - name: containerize-task
       runAfter: [read-properties-task]
       taskRef:
