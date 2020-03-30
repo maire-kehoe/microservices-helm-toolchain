@@ -96,7 +96,7 @@ spec:
           name: cd-config-volume
     - name: record-insights-build-info
       image: ibmcom/pipeline-base-image
-      # workingDir: /artifacts
+      workingDir: /artifacts
       env:
         - name: APP_NAME
           value: $(inputs.params.appName)         
@@ -124,7 +124,7 @@ spec:
           ls -al
           env
           ibmcloud plugin list
-          source ./artifacts/build.properties
+          source ./build.properties
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
