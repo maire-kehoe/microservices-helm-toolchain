@@ -20,7 +20,7 @@ properties:
   type: SECURE
   value: ${API_KEY}
 - name: appName
-  type: SECURE
+  type: TEXT
   value: ${APP_NAME}
 - name: clusterName
   type: TEXT

@@ -27,7 +27,10 @@ spec:
           echo "---"
           git rev-parse --abbrev-ref HEAD
           GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          echo $GIT_BRANCH
+          echo "GIT_BRANCH=${GIT_BRANCH}"
+          echo "---"
+          GIT_REPO_NAME=$(basename `git rev-parse --show-toplevel`)
+          echo "GIT_REPO_NAME=${GIT_REPO_NAME}"
           echo "---"
           GIT_USER=$( echo ${GIT_REMOTE_URL} | cut -d/ -f3 | cut -d: -f1 )
           GIT_PASSWORD=$( echo ${GIT_REMOTE_URL} | cut -d: -f3 | cut -d@ -f1 )
