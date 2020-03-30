@@ -84,9 +84,9 @@ spec:
           echo "PIPELINE_RUN_ID=${PIPELINE_RUN_ID}" >> ./build.properties
           echo "BUILD_NUMBER=${BUILD_NUMBER}" >> ./build.properties
           echo "PIPELINE_ID=${PIPELINE_ID}" >> ./build.properties
-          echo "TRIGGER_TYPE='${TRIGGER_TYPE}''" >> ./build.properties
-          echo "TRIGGER_NAME='${TRIGGER_NAME}''" >> ./build.properties
-          echo "TRIGGERED_BY='${TRIGGERED_BY}''" >> ./build.properties
+          echo "TRIGGER_TYPE='${TRIGGER_TYPE}'" >> ./build.properties
+          echo "TRIGGER_NAME='${TRIGGER_NAME}'" >> ./build.properties
+          echo "TRIGGERED_BY='${TRIGGERED_BY}'" >> ./build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
           cat ./build.properties | grep -v -i password
       volumeMounts:
