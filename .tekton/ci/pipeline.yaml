@@ -85,7 +85,7 @@ spec:
         outputs:
           - name: builtImage
             resource: app-image
-    - name: va-task
+    - name: check-vulnerabilities
       runAfter: [containerize]
       taskRef:
         name: vulnerability-advisor-task
@@ -106,7 +106,7 @@ spec:
             resource: app-image
             from:
               - containerize
-    - name: cluster-setup-task
+    - name: cluster-setup
       taskRef:
         name: fetch-iks-cluster-config
       params:
@@ -139,7 +139,7 @@ spec:
             from:
               - containerize
     - name: kubernetes-environment-check
-      runAfter: [cluster-setup-task]
+      runAfter: [cluster-setup]
       taskRef:
         name: validate-k8s-environment
       params:
@@ -210,4 +210,4 @@ spec:
           - name: cluster
             resource: target-cluster
             from:
-              - cluster-setup-task
+              - cluster-setup
