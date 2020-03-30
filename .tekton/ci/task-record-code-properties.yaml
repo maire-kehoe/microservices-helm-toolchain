@@ -42,6 +42,9 @@ spec:
           echo "GIT_PASSWORD=${GIT_PASSWORD}" >> /artifacts/build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
           cat /artifacts/build.properties | grep -v -i password
+      volumeMounts:
+        - mountPath: /artifacts
+          name: task-volume
     - name: record-build-properties
       image: ibmcom/pipeline-base-image
       env:
@@ -108,6 +111,11 @@ spec:
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
+      volumeMounts:
+        - mountPath: /artifacts
+          name: task-volume
+        - mountPath: /cd-config
+          name: cd-config-volume
   volumes:
     - name: task-volume
       persistentVolumeClaim:
