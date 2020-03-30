@@ -34,9 +34,9 @@ spec:
           echo "---"
           GIT_USER=$( echo ${GIT_REMOTE_URL} | cut -d/ -f3 | cut -d: -f1 )
           GIT_PASSWORD=$( echo ${GIT_REMOTE_URL} | cut -d: -f3 | cut -d@ -f1 )
-          echo "GIT_URL=${GIT_URL}" >> /artifacts/build.properties
-          echo "GIT_BRANCH=${GIT_BRANCH}" >> /artifacts/build.properties
-          echo "GIT_COMMIT=${GIT_COMMIT}" >> /artifacts/build.properties
+          # echo "GIT_URL=${GIT_URL}" >> /artifacts/build.properties
+          # echo "GIT_BRANCH=${GIT_BRANCH}" >> /artifacts/build.properties
+          # echo "GIT_COMMIT=${GIT_COMMIT}" >> /artifacts/build.properties
           echo "GIT_USER=${GIT_USER}" >> /artifacts/build.properties
           echo "GIT_PASSWORD=${GIT_PASSWORD}" >> /artifacts/build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"

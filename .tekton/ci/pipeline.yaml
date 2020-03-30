@@ -31,7 +31,7 @@ spec:
           value: $(params.repository)
         - name: branch
           value: $(params.branch)
-    - name: read-properties-task
+    - name: record-code-properties-task
       runAfter: [clone-task]
       taskRef:
         name: record-code-properties-task
@@ -41,7 +41,7 @@ spec:
         - name: appName
           value: $(params.appName)
     - name: containerize-task
-      runAfter: [read-properties-task]
+      runAfter: [record-code-properties-task]
       taskRef:
         name: containerize-task
       params:
