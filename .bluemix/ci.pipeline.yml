@@ -19,6 +19,9 @@ properties:
 - name: apikey
   type: SECURE
   value: ${API_KEY}
+- name: appName
+  type: SECURE
+  value: ${APP_NAME}
 - name: clusterName
   type: TEXT
   value: mycluster

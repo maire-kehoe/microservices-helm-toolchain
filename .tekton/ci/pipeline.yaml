@@ -29,15 +29,15 @@ spec:
           value: $(params.repository)
         - name: branch
           value: $(params.branch)
-    - name: read-run-properties-task
+    - name: read-properties-task
       runAfter: [clone-task]
       taskRef:
-        name: read-run-properties-task
+        name: record-code-properties-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
     - name: containerize-task
-      runAfter: [read-run-properties-task]
+      runAfter: [read-properties-task]
       taskRef:
         name: containerize-task
       params:
