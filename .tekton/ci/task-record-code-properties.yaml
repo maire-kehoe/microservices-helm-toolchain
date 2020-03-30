@@ -9,6 +9,9 @@ spec:
         description: the output pvc
       - name: appName
         description: Logical application name for DevOps Insights
+      - name: continuous-delivery-context-secret
+        description: name of the configmap containing the continuous delivery pipeline context secrets
+        default: cd-secret
   steps:
     - name: record-git-creds
       image: ibmcom/pipeline-base-image
@@ -96,12 +99,17 @@ spec:
       workingDir: /artifacts
       env:
         - name: APP_NAME
-          value: $(inputs.params.appName)
+          value: $(inputs.params.appName)         
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: $(inputs.params.continuous-delivery-context-secret)
+              key: API_KEY
+              optional: true
       command: ["/bin/bash", "-c"]
       args:
         - |
           set -e -o pipefail
-          ls -al
           source ./build.properties
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
