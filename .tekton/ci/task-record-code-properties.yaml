@@ -129,6 +129,7 @@ spec:
           BUILD_STATUS=pass
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           ibmcloud login --apikey ${API_KEY} --no-region
+          set -x
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
       volumeMounts:
         - mountPath: /artifacts
