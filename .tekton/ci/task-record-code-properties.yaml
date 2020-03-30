@@ -110,6 +110,12 @@ spec:
       args:
         - |
           set -e -o pipefail
+          ##########################################################################
+          # Setting HOME explicitly to have ibmcloud plugins available
+          # doing the export rather than env definition is a workaround
+          # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
+          export HOME="/root"
+          ##########################################################################          
           source ./build.properties
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
