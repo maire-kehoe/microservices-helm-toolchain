@@ -11,8 +11,8 @@ spec:
         description: Logical application name for DevOps Insights
   steps:
     - name: record-git-creds
-      image: alpine/git
-      # image: ibmcom/pipeline-base-image
+      # image: alpine/git
+      image: ibmcom/pipeline-base-image
       command: ["/bin/bash", "-c"]
       args:
         - |
