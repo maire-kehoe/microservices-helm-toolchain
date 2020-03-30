@@ -120,11 +120,12 @@ spec:
           # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
           export HOME="/root"
           ##########################################################################
+          ibmcloud plugin list
+          cat ./build.properties
+          source ./build.properties
           pwd
           ls -al
           env
-          ibmcloud plugin list
-          source ./build.properties
           BUILD_STATUS=pass
           ibmcloud login --apikey ${API_KEY} --no-region
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
