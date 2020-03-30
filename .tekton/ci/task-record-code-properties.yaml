@@ -20,9 +20,9 @@ spec:
       args:
         - |
           set -e -o pipefail
-          source ./build.properties
-          env
           ls -al
+          # env
+          # source ./build.properties
           # Record git info to later contribute to umbrella chart repo
           # GIT_COMMIT=$(git rev-parse HEAD)
           # GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -30,9 +30,6 @@ spec:
           GIT_REMOTE_URL=$( git config --get remote.origin.url )
           GIT_USER=$( echo ${GIT_REMOTE_URL} | cut -d/ -f3 | cut -d: -f1 )
           GIT_PASSWORD=$( echo ${GIT_REMOTE_URL} | cut -d: -f3 | cut -d@ -f1 )
-          # echo "GIT_URL=${GIT_URL}" >> ./build.properties
-          # echo "GIT_BRANCH=${GIT_BRANCH}" >> ./build.properties
-          # echo "GIT_COMMIT=${GIT_COMMIT}" >> ./build.properties
           echo "GIT_USER=${GIT_USER}" >> ./build.properties
           echo "GIT_PASSWORD=${GIT_PASSWORD}" >> ./build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
@@ -110,10 +107,6 @@ spec:
       args:
         - |
           set -e -o pipefail
-          pwd
-          ls -al
-          env
-          ibmcloud plugin list
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -121,11 +114,8 @@ spec:
           export HOME="/root"
           ##########################################################################
           ibmcloud plugin list
-          cat ./build.properties
+          cat ./build.properties | grep -v -i password
           source ./build.properties
-          pwd
-          ls -al
-          env
           BUILD_STATUS=pass
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           ibmcloud login --apikey ${API_KEY} --no-region
