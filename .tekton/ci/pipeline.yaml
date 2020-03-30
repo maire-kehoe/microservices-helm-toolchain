@@ -21,7 +21,7 @@ spec:
   - name: target-cluster
     type: cluster
   tasks:
-    - name: clone-task
+    - name: clone-repo
       taskRef:
         name: clone-repo-task
       params:
@@ -31,17 +31,26 @@ spec:
           value: $(params.repository)
         - name: branch
           value: $(params.branch)
-    - name: record-code-properties-task
-      runAfter: [clone-task]
+    - name: record-build
+      runAfter: [clone-repo]
       taskRef:
-        name: record-code-properties-task
+        name: record-build-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
         - name: appName
           value: $(params.appName)
-    - name: containerize-task
-      runAfter: [record-code-properties-task]
+    - name: unit-test
+      runAfter: [record-build]
+      taskRef:
+        name: unit-test-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: appName
+          value: $(params.appName)
+    - name: containerize
+      runAfter: [unit-test]
       taskRef:
         name: containerize-task
       params:
@@ -77,6 +86,7 @@ spec:
           - name: builtImage
             resource: app-image
     - name: va-task
+      runAfter: [containerize]
       taskRef:
         name: vulnerability-advisor-task
       params:
@@ -114,7 +124,7 @@ spec:
           - name: cluster
             resource: target-cluster
     - name: kubernetes-deployment-validation
-      runAfter: [containerize-task]
+      runAfter: [containerize]
       taskRef:
         name: validate-k8s-deployment-file
       params:

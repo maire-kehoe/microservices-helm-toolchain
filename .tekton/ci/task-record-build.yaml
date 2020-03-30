@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: record-code-properties-task
+  name: record-build-task
 spec:
   inputs:
     params:
@@ -37,7 +37,7 @@ spec:
       volumeMounts:
         - mountPath: /artifacts
           name: task-volume
-    - name: record-build-properties
+    - name: record-build-props
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
@@ -91,13 +91,13 @@ spec:
           name: task-volume
         - mountPath: /cd-config
           name: cd-config-volume
-    - name: record-insights-build-info
+    - name: publish-build-record
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
         - name: APP_NAME
           value: $(inputs.params.appName)         
-        - name: API_KEY
+        - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
               name: $(inputs.params.continuous-delivery-context-secret)
@@ -118,7 +118,7 @@ spec:
           source ./build.properties
           BUILD_STATUS=pass
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
-          ibmcloud login --apikey ${API_KEY} --no-region
+          ibmcloud login --apikey ${IBM_CLOUD_API_KEY} --no-region
           set -x
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
       volumeMounts:
