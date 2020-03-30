@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: pipeline-ms-k8s
+  name: pipeline
 spec:
   params:
     - name: pipeline-pvc

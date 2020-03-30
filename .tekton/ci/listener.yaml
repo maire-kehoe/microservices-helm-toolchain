@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: trigger-template-cicd-ms
+  name: trigger-template
 spec:
   params:
     - name: apikey
@@ -13,6 +13,7 @@ spec:
       description: the name of the cluster to target
     - name: clusterTargetNamespace
       default: prod-tkn
+    - name: appName
   resourcetemplates:
     # CD secret to provide API_KEY to access toolchain information
     - apiVersion: v1
@@ -65,7 +66,7 @@ spec:
         name: $(params.branch)-$(params.triggerEvent)-$(uid)
       spec:
         pipelineRef:
-          name: pipeline-ms-k8s
+          name: pipeline
         resources:
           - name: app-image
             resourceRef:
@@ -122,7 +123,7 @@ spec:
     - binding:
         name: trigger-binding-manual
       template:
-        name: trigger-template-cicd-ms
+        name: trigger-template
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: EventListener
@@ -133,4 +134,4 @@ spec:
     - binding:
         name: trigger-binding-github-commit
       template:
-        name: trigger-template-cicd-ms
+        name: trigger-template
