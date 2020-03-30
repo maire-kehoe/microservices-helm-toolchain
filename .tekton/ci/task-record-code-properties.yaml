@@ -80,7 +80,7 @@ spec:
           TOOLCHAIN_REGION=$(jq -r '.region_id' /cd-config/toolchain.json | awk -F: '{print $3}')
           echo "TOOLCHAIN_ID=${TOOLCHAIN_ID}" >> ./build.properties
           echo "TOOLCHAIN_REGION=${TOOLCHAIN_REGION}" >> ./build.properties
-          echo "PIPELINE_RUN_NAME='${PIPELINE_RUN_NAME}''" >> ./build.properties
+          echo "PIPELINE_RUN_NAME='${PIPELINE_RUN_NAME}'" >> ./build.properties
           echo "PIPELINE_RUN_ID=${PIPELINE_RUN_ID}" >> ./build.properties
           echo "BUILD_NUMBER=${BUILD_NUMBER}" >> ./build.properties
           echo "PIPELINE_ID=${PIPELINE_ID}" >> ./build.properties
