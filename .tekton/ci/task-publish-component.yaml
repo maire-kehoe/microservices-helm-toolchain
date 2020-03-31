@@ -23,7 +23,7 @@ spec:
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
-        - name: API_KEY
+        - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
               name: $(inputs.params.continuous-delivery-context-secret)
@@ -35,7 +35,7 @@ spec:
         - |
           set -e -o pipefail
           source ./build.properties
-          cat ./build.properties
+          # cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -52,7 +52,7 @@ spec:
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
-        - name: API_KEY
+        - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
               name: $(inputs.params.continuous-delivery-context-secret)
@@ -62,7 +62,7 @@ spec:
         - |
           set -e -o pipefail
           source ./build.properties
-          cat ./build.properties
+          # cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
