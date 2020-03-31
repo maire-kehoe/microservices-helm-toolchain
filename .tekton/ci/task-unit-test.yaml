@@ -29,14 +29,12 @@ spec:
       args:
         - |
           set -e -o pipefail
-          pwd
-          ls -al /
-          ls -al
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
           # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
-          export HOME="/home/pipeline"
+          # and until 0.11 - https://ibm.ent.box.com/notes/599948660131?s=rqk76zkkdsz1cenvpw0ad8enxul6j0nv
+          export HOME=/root && source ~/.nvm/nvm.sh
           ##########################################################################
           # set -x
           source ./build.properties
