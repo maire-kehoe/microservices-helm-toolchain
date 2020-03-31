@@ -1,0 +1,89 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: publish-component-task
+spec:
+  inputs:
+    params:
+      - name: task-pvc
+        description: the task pvc - this is the volume where the files (Dockerfile etc..) are expected to be
+      - name: ibmcloudApi
+        description: the ibmcloud api
+        default: https://cloud.ibm.com
+      - name: continuous-delivery-context-secret
+        description: name of the configmap containing the continuous delivery pipeline context secrets
+        default: cd-secret
+      - name: container-registry-apikey-secret-key
+        description: field in the secret that contains the api key used to login to ibmcloud container registry
+        default: 'API_KEY'
+      - name: policyName
+        description: Policy name for DevOps Insights
+  steps:
+    - name: check-gate
+      image: ibmcom/pipeline-base-image
+      workingDir: /artifacts
+      env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: $(inputs.params.continuous-delivery-context-secret)
+              key: $(inputs.params.container-registry-apikey-secret-key)
+        - name: POLICY_NAME
+          value: $(inputs.params.policyName)  
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          set -e -o pipefail
+          source ./build.properties
+          cat ./build.properties
+          ##########################################################################
+          # Setting HOME explicitly to have ibmcloud plugins available
+          # doing the export rather than env definition is a workaround
+          # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
+          export HOME="/root"
+          ##########################################################################
+          source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
+      volumeMounts:
+        - mountPath: /cd-config
+          name: cd-config-volume
+        - mountPath: /artifacts
+          name: task-volume
+      - name: publish-component
+      image: ibmcom/pipeline-base-image
+      workingDir: /artifacts
+      env:
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: $(inputs.params.continuous-delivery-context-secret)
+              key: $(inputs.params.container-registry-apikey-secret-key)
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          set -e -o pipefail
+          source ./build.properties
+          cat ./build.properties
+          ##########################################################################
+          # Setting HOME explicitly to have ibmcloud plugins available
+          # doing the export rather than env definition is a workaround
+          # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
+          export HOME="/root"
+          ##########################################################################
+          source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
+      volumeMounts:
+        - mountPath: /cd-config
+          name: cd-config-volume
+        - mountPath: /artifacts
+          name: task-volume
+  volumes:
+    - name: cd-config-volume
+      configMap:
+        name: toolchain
+        items:
+        - key: toolchain.json
+          path: toolchain.json
+    - name: task-volume
+      persistentVolumeClaim:
+        claimName: $(inputs.params.task-pvc)
+    - name: steps-volume
+      emptyDir: {}

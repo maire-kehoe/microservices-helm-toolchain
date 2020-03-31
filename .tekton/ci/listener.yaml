@@ -85,6 +85,8 @@ spec:
           #   value: $(params.clusterTargetNamespace)
           - name: appName
             value: $(params.appName)
+          - name: policyName
+            value: $(params.policyName)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding

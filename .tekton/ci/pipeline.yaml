@@ -15,6 +15,8 @@ spec:
       default: deployment.yml
     - name: appName
       description: the logical name of the app
+    - name: policyName
+      description: the policy for publishing the app
   resources:
   - name: app-image
     type: image
@@ -87,23 +89,15 @@ spec:
       runAfter: [containerize]
       taskRef:
         name: vulnerability-check-task
+    - name: publish-component
+      runAfter: [check-vulnerabilities]
+      taskRef:
+        name: publish-component-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
-        - name: scanReportFile
-          value: 'app-image-va-report.json'
-        # - name: maxIteration
-        #   value: '5'
-        # - name: sleepTime
-        #   value: '3'
-        # - name: failOnScannedIssues          
-        #   value: 'false'
-      resources:          
-        inputs:
-          - name: image
-            resource: app-image
-            from:
-              - containerize
+        - name: policyName
+          value: $(params.policyName)
     # - name: cluster-setup
     #   taskRef:
     #     name: fetch-iks-cluster-config

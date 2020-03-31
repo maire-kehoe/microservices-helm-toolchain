@@ -40,6 +40,9 @@ properties:
 - name: registryNamespace
   type: TEXT
   value: ${REGISTRY_NAMESPACE}
+- name: policyName
+  type: TEXT
+  value: ${POLICY_NAME}
 triggers:
 - eventListener: event-listener-manual-run
   name: Manual Trigger
