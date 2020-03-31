@@ -56,8 +56,8 @@ spec:
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
-        - name: additionalTags
-          value: '1.0.0-dev'
+        # - name: additionalTags
+        #   value: 'latest'
         - name: additionalTagsScript
           value: |
             # Include the clone task output variables in the environment
@@ -88,7 +88,7 @@ spec:
     - name: check-vulnerabilities
       runAfter: [containerize]
       taskRef:
-        name: vulnerability-advisor-task
+        name: vulnerability-check-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
