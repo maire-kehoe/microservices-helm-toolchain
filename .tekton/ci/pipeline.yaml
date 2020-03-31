@@ -123,41 +123,41 @@ spec:
     #     outputs:
     #       - name: cluster
     #         resource: target-cluster
-    - name: kubernetes-deployment-validation
-      runAfter: [containerize]
-      taskRef:
-        name: validate-k8s-deployment-file
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
-        - name: deploymentFile
-          value: $(params.deploymentFile)
-      resources:          
-        inputs:
-          - name: image
-            resource: app-image
-            from:
-              - containerize
-    - name: kubernetes-environment-check
-      runAfter: [cluster-setup]
-      taskRef:
-        name: validate-k8s-environment
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
-        - name: task-pvc-mountpath
-          value: /pipelinerun
-        - name: clusterPipelineResourcesDirectory
-          value: /pipelinerun/.tekton-clusters
-        - name: namespace
-          value: $(params.clusterTargetNamespace)
-      resources:          
-        inputs:
-          # - name: cluster
-          #   resource: target-cluster
-          - name: image
-            resource: app-image
-            from:
+    # - name: kubernetes-deployment-validation
+    #   runAfter: [containerize]
+    #   taskRef:
+    #     name: validate-k8s-deployment-file
+    #   params:
+    #     - name: task-pvc
+    #       value: $(params.pipeline-pvc)
+    #     - name: deploymentFile
+    #       value: $(params.deploymentFile)
+    #   resources:          
+    #     inputs:
+    #       - name: image
+    #         resource: app-image
+    #         from:
+    #           - containerize
+    # - name: kubernetes-environment-check
+    #   runAfter: [cluster-setup]
+    #   taskRef:
+    #     name: validate-k8s-environment
+    #   params:
+    #     - name: task-pvc
+    #       value: $(params.pipeline-pvc)
+    #     - name: task-pvc-mountpath
+    #       value: /pipelinerun
+    #     - name: clusterPipelineResourcesDirectory
+    #       value: /pipelinerun/.tekton-clusters
+    #     - name: namespace
+    #       value: $(params.clusterTargetNamespace)
+    #   resources:          
+    #     inputs:
+    #       - name: cluster
+    #         resource: target-cluster
+    #       - name: image
+    #         resource: app-image
+    #         from:
     #           - containerize
     # - name: kubectl-deployment
     #   runAfter: [kubernetes-environment-check, kubernetes-deployment-validation]
