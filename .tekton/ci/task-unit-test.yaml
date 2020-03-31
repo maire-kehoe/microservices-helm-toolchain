@@ -7,8 +7,6 @@ spec:
     params:
       - name: task-pvc
         description: the output pvc
-      - name: appName
-        description: Logical application name for DevOps Insights
       - name: continuous-delivery-context-secret
         description: name of the configmap containing the continuous delivery pipeline context secrets
         default: cd-secret
@@ -16,9 +14,7 @@ spec:
     - name: run-tests
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
-      env:
-        - name: APP_NAME
-          value: $(inputs.params.appName)         
+      env:      
         - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:

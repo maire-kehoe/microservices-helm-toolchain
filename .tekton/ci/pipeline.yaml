@@ -47,8 +47,6 @@ spec:
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
-        - name: appName
-          value: $(params.appName)
     - name: containerize
       runAfter: [unit-test]
       taskRef:
