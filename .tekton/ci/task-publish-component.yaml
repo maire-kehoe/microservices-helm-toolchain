@@ -41,6 +41,7 @@ spec:
           source ./build.properties
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
+          env
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -75,6 +76,7 @@ spec:
           source ./build.properties 
           # export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
+          env
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
