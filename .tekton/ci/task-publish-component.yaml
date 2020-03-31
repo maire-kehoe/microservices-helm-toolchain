@@ -40,13 +40,14 @@ spec:
           set -e -o pipefail
           source ./build.properties
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
-          # cat ./build.properties
+          cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
           # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
           export HOME="/root"
           ##########################################################################
+          set -x
           SOURCE_BUILD_NUMBER=${BUID_NUMBER} # classic script var
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
       volumeMounts:
