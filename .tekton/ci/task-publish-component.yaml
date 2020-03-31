@@ -48,6 +48,11 @@ spec:
           export HOME="/root"
           ##########################################################################
           set -x
+          echo $BUILD_NUMBER
+          echo ${BUILD_NUMBER}
+          A=$BUILD_NUMBER
+          echo $A
+          echo ${A}
           SOURCE_BUILD_NUMBER=${BUID_NUMBER}
           env
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
