@@ -9,10 +9,10 @@ spec:
     - name: branch
       default: master
     - name: triggerEvent
-    - name: clusterName
-      description: the name of the cluster to target
-    - name: clusterTargetNamespace
-      default: prod-tkn
+    # - name: clusterName
+    #   description: the name of the cluster to target
+    # - name: clusterTargetNamespace
+    #   default: prod-tkn
     - name: appName
   resourcetemplates:
     # CD secret to provide API_KEY to access toolchain information
@@ -43,23 +43,23 @@ spec:
         params:
           - name: url
             value: "$(params.registryDomain)/$(params.registryNamespace)/$(params.imageName)"
-    - apiVersion: tekton.dev/v1alpha1
-      kind: PipelineResource
-      metadata:
-        name: the-cluster
-      spec:
-        type: cluster
-        params:
-          - name: name
-            value: $(params.clusterName)
-          - name: username
-            value: norealvalueneeded
-          - name: url
-            value: https://no.real.value.needed
-          - name: token
-            value: norealvalueneeded
-          - name: cadata
-            value: norealvalueneeded
+    # - apiVersion: tekton.dev/v1alpha1
+    #   kind: PipelineResource
+    #   metadata:
+    #     name: dev-cluster
+    #   spec:
+    #     type: cluster
+    #     params:
+    #       - name: name
+    #         value: $(params.clusterName)
+    #       - name: username
+    #         value: norealvalueneeded
+    #       - name: url
+    #         value: https://no.real.value.needed
+    #       - name: token
+    #         value: norealvalueneeded
+    #       - name: cadata
+    #         value: norealvalueneeded
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
       metadata:
@@ -71,9 +71,9 @@ spec:
           - name: app-image
             resourceRef:
               name: image-to-build
-          - name: target-cluster
-            resourceRef:
-              name: the-cluster
+          # - name: target-cluster
+          #   resourceRef:
+          #     name: dev-cluster
         params:
           - name: pipeline-pvc
             value: pipelinerun-$(uid)-pvc

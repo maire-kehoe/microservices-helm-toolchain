@@ -10,7 +10,7 @@ spec:
       description: the git repo
     - name: branch
       description: the branch for the git repo
-    - name: clusterTargetNamespace     
+    # - name: clusterTargetNamespace     
     - name: deploymentFile
       default: deployment.yml
     - name: appName
@@ -18,8 +18,8 @@ spec:
   resources:
   - name: app-image
     type: image
-  - name: target-cluster
-    type: cluster
+  # - name: target-cluster
+  #   type: cluster
   tasks:
     - name: clone-repo
       taskRef:
@@ -106,23 +106,23 @@ spec:
             resource: app-image
             from:
               - containerize
-    - name: cluster-setup
-      taskRef:
-        name: fetch-iks-cluster-config
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
-        - name: clusterPipelineResourcesDirectoryFallback
-          value: .tekton-clusters
-        - name: clusterAndWorkerNodesJsonExport
-          value: .tekton-clusters
-      resources:          
-        inputs:
-          - name: cluster
-            resource: target-cluster
-        outputs:
-          - name: cluster
-            resource: target-cluster
+    # - name: cluster-setup
+    #   taskRef:
+    #     name: fetch-iks-cluster-config
+    #   params:
+    #     - name: task-pvc
+    #       value: $(params.pipeline-pvc)
+    #     - name: clusterPipelineResourcesDirectoryFallback
+    #       value: .tekton-clusters
+    #     - name: clusterAndWorkerNodesJsonExport
+    #       value: .tekton-clusters
+    #   resources:          
+    #     inputs:
+    #       - name: cluster
+    #         resource: target-cluster
+    #     outputs:
+    #       - name: cluster
+    #         resource: target-cluster
     - name: kubernetes-deployment-validation
       runAfter: [containerize]
       taskRef:
@@ -158,56 +158,56 @@ spec:
           - name: image
             resource: app-image
             from:
-              - containerize
-    - name: kubectl-deployment
-      runAfter: [kubernetes-environment-check, kubernetes-deployment-validation]
-      taskRef:
-        name: kubernetes-contextual-execution
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
-        - name: task-pvc-mountpath
-          value: /pipelinerun
-        - name: clusterPipelineResourcesDirectory
-          value: /pipelinerun/.tekton-clusters
-        - name: script
-          value: |
-            echo "DEPLOYING using manifest"
-            CLUSTER_NAMESPACE=$(params.clusterTargetNamespace)
-            set -x
-            kubectl apply --namespace $CLUSTER_NAMESPACE -f $(params.deploymentFile)
-            set +x
-            echo "=========================================================="
-            DEPLOYMENT_DOC_INDEX=$(yq read --doc "*" --tojson $(params.deploymentFile) | jq -r 'to_entries | .[] | select(.value.kind | ascii_downcase=="deployment") | .key')
-            DEPLOYMENT_NAME=$(yq read --doc ${DEPLOYMENT_DOC_INDEX} $(params.deploymentFile) metadata.name)
-            echo -e "CHECKING deployment rollout of ${DEPLOYMENT_NAME}"
-            echo ""
-            set -x
-            if kubectl rollout status deploy/${DEPLOYMENT_NAME} --watch=true --timeout=150s --namespace $CLUSTER_NAMESPACE; then
-              STATUS="pass"
-            else
-              STATUS="fail"
-            fi
-            set +x
-            if [ "$STATUS" == "fail" ]; then
-              echo "DEPLOYMENT FAILED"
-              exit 1
-            fi
-
-            # Find the cluster information for ingress or workers public ip
-            TARGET_CLUSTER=$( yq read $KUBECONFIG clusters[0].name | awk -F/ '{print $1}' )
-
-            SERVICE_NAME=$(kubectl get services --namespace ${CLUSTER_NAMESPACE} -o json | jq -r ' .items[] | select (.spec.selector.app=="'"${DEPLOYMENT_NAME}"'") | .metadata.name ')
-            if [ "$SERVICE_NAME" ]; then
-              PORT=$( kubectl get services --namespace ${CLUSTER_NAMESPACE} | grep ${SERVICE_NAME} | sed 's/.*:\([0-9]*\).*/\1/g' )
-              IP_ADDR=$(jq -r '.[0].publicIP' /pipelinerun/.tekton-clusters/${TARGET_CLUSTER}/${TARGET_CLUSTER}-workers.json)
-              echo -e "VIEW THE APPLICATION AT: http://${IP_ADDR}:${PORT}"
-            else
-              echo "No service found for $DEPLOYMENT_NAME"
-            fi
-      resources:          
-        inputs:
-          - name: cluster
-            resource: target-cluster
-            from:
-              - cluster-setup
+    #           - containerize
+    # - name: kubectl-deployment
+    #   runAfter: [kubernetes-environment-check, kubernetes-deployment-validation]
+    #   taskRef:
+    #     name: kubernetes-contextual-execution
+    #   params:
+    #     - name: task-pvc
+    #       value: $(params.pipeline-pvc)
+    #     - name: task-pvc-mountpath
+    #       value: /pipelinerun
+    #     - name: clusterPipelineResourcesDirectory
+    #       value: /pipelinerun/.tekton-clusters
+    #     - name: script
+    #       value: |
+    #         echo "DEPLOYING using manifest"
+    #         CLUSTER_NAMESPACE=$(params.clusterTargetNamespace)
+    #         set -x
+    #         kubectl apply --namespace $CLUSTER_NAMESPACE -f $(params.deploymentFile)
+    #         set +x
+    #         echo "=========================================================="
+    #         DEPLOYMENT_DOC_INDEX=$(yq read --doc "*" --tojson $(params.deploymentFile) | jq -r 'to_entries | .[] | select(.value.kind | ascii_downcase=="deployment") | .key')
+    #         DEPLOYMENT_NAME=$(yq read --doc ${DEPLOYMENT_DOC_INDEX} $(params.deploymentFile) metadata.name)
+    #         echo -e "CHECKING deployment rollout of ${DEPLOYMENT_NAME}"
+    #         echo ""
+    #         set -x
+    #         if kubectl rollout status deploy/${DEPLOYMENT_NAME} --watch=true --timeout=150s --namespace $CLUSTER_NAMESPACE; then
+    #           STATUS="pass"
+    #         else
+    #           STATUS="fail"
+    #         fi
+    #         set +x
+    #         if [ "$STATUS" == "fail" ]; then
+    #           echo "DEPLOYMENT FAILED"
+    #           exit 1
+    #         fi
+    #
+    #         # Find the cluster information for ingress or workers public ip
+    #         TARGET_CLUSTER=$( yq read $KUBECONFIG clusters[0].name | awk -F/ '{print $1}' )
+    #
+    #         SERVICE_NAME=$(kubectl get services --namespace ${CLUSTER_NAMESPACE} -o json | jq -r ' .items[] | select (.spec.selector.app=="'"${DEPLOYMENT_NAME}"'") | .metadata.name ')
+    #         if [ "$SERVICE_NAME" ]; then
+    #           PORT=$( kubectl get services --namespace ${CLUSTER_NAMESPACE} | grep ${SERVICE_NAME} | sed 's/.*:\([0-9]*\).*/\1/g' )
+    #           IP_ADDR=$(jq -r '.[0].publicIP' /pipelinerun/.tekton-clusters/${TARGET_CLUSTER}/${TARGET_CLUSTER}-workers.json)
+    #           echo -e "VIEW THE APPLICATION AT: http://${IP_ADDR}:${PORT}"
+    #         else
+    #           echo "No service found for $DEPLOYMENT_NAME"
+    #         fi
+    #   resources:          
+    #     inputs:
+    #       - name: cluster
+    #         resource: target-cluster
+    #         from:
+    #           - cluster-setup
