@@ -81,8 +81,8 @@ spec:
             value: $(params.repository)
           - name: branch
             value: $(params.branch)
-          - name: clusterTargetNamespace
-            value: $(params.clusterTargetNamespace)
+          # - name: clusterTargetNamespace
+          #   value: $(params.clusterTargetNamespace)
           - name: appName
             value: $(params.appName)
 ---

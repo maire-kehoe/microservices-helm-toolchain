@@ -153,8 +153,8 @@ spec:
           value: $(params.clusterTargetNamespace)
       resources:          
         inputs:
-          - name: cluster
-            resource: target-cluster
+          # - name: cluster
+          #   resource: target-cluster
           - name: image
             resource: app-image
             from:
