@@ -36,7 +36,7 @@ properties:
   value: ${source-repo-url}
 - name: registryDomain
   type: TEXT
-  value: ${REGISTRY_REGION_ID}
+  value: us.cr.io # ${REGISTRY_REGION_ID}
 - name: registryNamespace
   type: TEXT
   value: ${REGISTRY_NAMESPACE}
