@@ -41,7 +41,6 @@ spec:
           source ./build.properties
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
-          env
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -49,7 +48,8 @@ spec:
           export HOME="/root"
           ##########################################################################
           set -x
-          SOURCE_BUILD_NUMBER=${BUID_NUMBER} # classic script var
+          SOURCE_BUILD_NUMBER=${BUID_NUMBER}
+          env
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
       volumeMounts:
         - mountPath: /cd-config
@@ -76,7 +76,6 @@ spec:
           source ./build.properties 
           # export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
-          env
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -88,8 +87,9 @@ spec:
           SOURCE_GIT_COMMIT=${GIT_COMMIT}
           SOURCE_GIT_USER=${GIT_USER}
           SOURCE_GIT_PASSWORD=${GIT_PASSWORD}
-          SOURCE_BUILD_NUMBER=${BUID_NUMBER} # classic script var
+          SOURCE_BUILD_NUMBER=${BUID_NUMBER}
           IMAGE_TAG=${IMAGE_TAGS}
+          env
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
       volumeMounts:
         - mountPath: /cd-config
