@@ -43,6 +43,9 @@ properties:
 - name: policyName
   type: TEXT
   value: ${POLICY_NAME}
+- name: umbrellaRepoName
+  type: TEXT
+  value: ${UMBRELLA_REPO_NAME}
 triggers:
 - eventListener: event-listener-manual-run
   name: Manual Trigger

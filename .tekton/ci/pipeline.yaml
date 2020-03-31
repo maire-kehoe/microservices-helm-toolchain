@@ -17,6 +17,10 @@ spec:
       description: the logical name of the app
     - name: policyName
       description: the policy for publishing the app
+    - name: umbrellaRepoName
+      description: Umbrella repo name
+    - name: chartRoot
+      value: Component chart root folder 
   resources:
   - name: app-image
     type: image
@@ -115,6 +119,10 @@ spec:
           value: $(params.pipeline-pvc)
         - name: policyName
           value: $(params.policyName)
+        - name: umbrellaRepoName
+          value: $(params.umbrellaRepoName)
+        - name: chartRoot
+          value: $(params.chartRoot)
     # - name: cluster-setup
     #   taskRef:
     #     name: fetch-iks-cluster-config

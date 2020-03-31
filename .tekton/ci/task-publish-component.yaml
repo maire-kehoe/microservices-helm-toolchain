@@ -18,6 +18,10 @@ spec:
         default: 'API_KEY'
       - name: policyName
         description: Policy name for DevOps Insights
+      - name: umbrellaRepoName
+        description: Umbrella repo name
+      - name: chartRoot
+          value: Component chart root folder 
   steps:
     - name: check-gate
       image: ibmcom/pipeline-base-image
@@ -43,7 +47,7 @@ spec:
           # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
           export HOME="/root"
           ##########################################################################
-          set -x
+          SOURCE_BUILD_NUMBER=${BUID_NUMBER} # classic script var
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
       volumeMounts:
         - mountPath: /cd-config
@@ -59,13 +63,17 @@ spec:
             secretKeyRef:
               name: $(inputs.params.continuous-delivery-context-secret)
               key: $(inputs.params.container-registry-apikey-secret-key)
+        - name: UMBRELLA_REPO_NAME
+          value: $(inputs.params.umbrellaRepoName)
+        - name: CHART_ROOT
+          value: $(inputs.params.chartRoot) 
       command: ["/bin/bash", "-c"]
       args:
         - |
           set -e -o pipefail
-          source ./build.properties
-          export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
-          # cat ./build.properties
+          source ./build.properties 
+          # export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
+          cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -73,6 +81,12 @@ spec:
           export HOME="/root"
           ##########################################################################
           set -x
+          SOURCE_GIT_URL=${GIT_URL}
+          SOURCE_GIT_COMMIT=${GIT_COMMIT}
+          SOURCE_GIT_USER=${GIT_USER}
+          SOURCE_GIT_PASSWORD=${GIT_PASSWORD}
+          SOURCE_BUILD_NUMBER=${BUID_NUMBER} # classic script var
+          IMAGE_TAG=${IMAGE_TAGS}
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
       volumeMounts:
         - mountPath: /cd-config
