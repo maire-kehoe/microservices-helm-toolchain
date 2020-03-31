@@ -48,7 +48,7 @@ spec:
           name: cd-config-volume
         - mountPath: /artifacts
           name: task-volume
-      - name: publish-component
+    - name: publish-component
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
