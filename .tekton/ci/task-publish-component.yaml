@@ -21,7 +21,7 @@ spec:
       - name: umbrellaRepoName
         description: Umbrella repo name
       - name: chartRoot
-          value: Component chart root folder 
+        value: Component chart root folder 
   steps:
     - name: check-gate
       image: ibmcom/pipeline-base-image
