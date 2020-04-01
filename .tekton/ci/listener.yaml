@@ -91,6 +91,8 @@ spec:
             value: $(params.policyName)
           - name: umbrellaRepoName
             value: $(params.umbrellaRepoName)
+          - name: chartRoot
+            value: $(params.chartRoot)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding
