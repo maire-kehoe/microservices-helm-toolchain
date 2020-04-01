@@ -88,7 +88,6 @@ spec:
           SOURCE_GIT_USER=${GIT_USER}
           SOURCE_GIT_PASSWORD=${GIT_PASSWORD}
           SOURCE_BUILD_NUMBER=${BUILD_NUMBER}
-          IMAGE_TAG=${IMAGE_TAGS}
           env
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
       volumeMounts:

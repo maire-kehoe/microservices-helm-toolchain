@@ -60,8 +60,8 @@ spec:
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
-        # - name: additionalTags
-        #   value: 'latest'
+        - name: additionalTags
+          value: 'latest'
         - name: additionalTagsScript
           value: |
             # Include the clone task output variables in the environment
@@ -84,6 +84,8 @@ spec:
             fi
             if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
             IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
+            # Record image tag
+            echo "IMAGE_TAG=${IMAGE_TAG}" >> /artifacts/build.properties
             echo ${IMAGE_TAG}
       resources:          
         outputs:
