@@ -40,7 +40,6 @@ spec:
           set -e -o pipefail
           source ./build.properties
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
-          cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
@@ -49,7 +48,6 @@ spec:
           ##########################################################################
           set -x
           SOURCE_BUILD_NUMBER=${BUILD_NUMBER}
-          env
           source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
       volumeMounts:
         - mountPath: /cd-config
@@ -73,7 +71,7 @@ spec:
       args:
         - |
           set -e -o pipefail
-          source ./build.properties 
+          source ./build.properties
           # export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
           ##########################################################################
@@ -83,6 +81,7 @@ spec:
           export HOME="/root"
           ##########################################################################
           set -x
+          cp ../cd-config/toolchain.json ./_toolchain.json #script expecting classic toolchain.json
           SOURCE_GIT_URL=${GIT_URL}
           SOURCE_GIT_COMMIT=${GIT_COMMIT}
           SOURCE_GIT_USER=${GIT_USER}
@@ -105,5 +104,3 @@ spec:
     - name: task-volume
       persistentVolumeClaim:
         claimName: $(inputs.params.task-pvc)
-    - name: steps-volume
-      emptyDir: {}
