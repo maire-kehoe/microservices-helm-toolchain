@@ -81,6 +81,10 @@ spec:
           export HOME="/root"
           ##########################################################################
           set -x
+          pwd 
+          ls ../cd-config
+          cat ../cd-config/toolchain.json
+          
           cp ../cd-config/toolchain.json ./_toolchain.json #script expecting classic toolchain.json
           SOURCE_GIT_URL=${GIT_URL}
           SOURCE_GIT_COMMIT=${GIT_COMMIT}
