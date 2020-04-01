@@ -72,7 +72,6 @@ spec:
         - |
           set -e -o pipefail
           source ./build.properties
-          # export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           cat ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
@@ -84,7 +83,9 @@ spec:
           pwd 
           ls ../cd-config
           cat ../cd-config/toolchain.json
-          
+          echo "UMBRELLA_REPO_NAME=$UMBRELLA_REPO_NAME"
+          echo "CHART_ROOT=$CHART_ROOT"
+
           cp ../cd-config/toolchain.json ./_toolchain.json #script expecting classic toolchain.json
           SOURCE_GIT_URL=${GIT_URL}
           SOURCE_GIT_COMMIT=${GIT_COMMIT}

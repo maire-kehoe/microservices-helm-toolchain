@@ -89,6 +89,8 @@ spec:
             value: $(params.appName)
           - name: policyName
             value: $(params.policyName)
+          - name: umbrellaRepoName
+            value: $(params.umbrellaRepoName)
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: TriggerBinding
