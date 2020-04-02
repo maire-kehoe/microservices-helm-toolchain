@@ -105,7 +105,7 @@ spec:
         # - name: sleepTime
         #   value: '3'
         - name: failOnScannedIssues          
-           value: 'false'
+          value: 'false'
       resources:          
         inputs:
           - name: image
