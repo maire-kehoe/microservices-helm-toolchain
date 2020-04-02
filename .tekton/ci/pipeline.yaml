@@ -94,7 +94,7 @@ spec:
     - name: check-vulnerabilities
       runAfter: [containerize]
       taskRef:
-        name: vulnerability-check-task
+        name: vulnerability-advisor-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
@@ -104,14 +104,23 @@ spec:
         #   value: '5'
         # - name: sleepTime
         #   value: '3'
-        # - name: failOnScannedIssues          
-        #   value: 'false'
+        - name: failOnScannedIssues          
+           value: 'false'
       resources:          
         inputs:
           - name: image
             resource: app-image
             from:
               - containerize
+    - name: record-vulnerabilities
+      runAfter: [check-vulnerabilities]
+      taskRef:
+        name: vulnerability-record-task
+      params:
+        - name: task-pvc
+          value: $(params.pipeline-pvc)
+        - name: scanReportFile
+          value: 'app-image-va-report.json'
     - name: publish-component
       runAfter: [check-vulnerabilities]
       taskRef:
