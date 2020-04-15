@@ -47,14 +47,14 @@ spec:
         - name: appName
           value: $(params.appName)
     - name: unit-test
-      runAfter: [clone-repo]
+      runAfter: [record-build]
       taskRef:
         name: unit-test-task
       params:
         - name: task-pvc
           value: $(params.pipeline-pvc)
     - name: containerize
-      runAfter: [unit-test,record-build]
+      runAfter: [unit-test]
       taskRef:
         name: cr-build-task
       params:
