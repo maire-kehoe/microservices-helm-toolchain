@@ -78,7 +78,7 @@ spec:
           echo "==============================="
           echo cat /cd-config/toolchain.json
           echo "==============================="
-          TOOLCHAIN_ID=${TOOLCHAIN_ID}" >> ./build.properties
+          echo "TOOLCHAIN_ID=${TOOLCHAIN_ID}" >> ./build.properties
           echo "TOOLCHAIN_REGION=${TOOLCHAIN_REGION}" >> ./build.properties
           echo "PIPELINE_RUN_NAME='${PIPELINE_RUN_NAME}'" >> ./build.properties
           echo "PIPELINE_RUN_ID=${PIPELINE_RUN_ID}" >> ./build.properties
