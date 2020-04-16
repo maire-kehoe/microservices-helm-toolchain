@@ -33,7 +33,7 @@ properties:
   value: ${IMAGE_NAME}
 - name: repository
   type: TEXT
-  value: ${source-repo-url}
+  value: "" # will be inferred from toolchain introspection
 - name: registryDomain
   type: TEXT
   value: us.cr.io # ${REGISTRY_REGION_ID}
