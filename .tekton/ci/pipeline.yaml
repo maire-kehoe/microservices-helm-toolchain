@@ -27,7 +27,7 @@ spec:
   # - name: target-cluster
   #   type: cluster
   tasks:
-     - name: read-properties
+    - name: read-properties
       taskRef:
         name: read-toolchain-properties-task
       params:
