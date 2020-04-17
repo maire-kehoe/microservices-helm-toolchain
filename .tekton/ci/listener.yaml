@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: trigger-template
@@ -62,7 +62,7 @@ spec:
     #         value: norealvalueneeded
     #       - name: cadata
     #         value: norealvalueneeded
-    - apiVersion: tekton.dev/v1alpha1
+    - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
         name: $(params.branch)-$(params.triggerEvent)-$(uid)
@@ -76,9 +76,11 @@ spec:
           # - name: target-cluster
           #   resourceRef:
           #     name: dev-cluster
+        workspaces:
+          - name: shared-data
+            persistentVolumeClaim:
+              claimName: pipelinerun-$(uid)-pvc
         params:
-          - name: pipeline-pvc
-            value: pipelinerun-$(uid)-pvc
           - name: repository
             value: $(params.repository)
           - name: branch
@@ -94,7 +96,7 @@ spec:
           - name: chartRoot
             value: $(params.chartRoot)
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: trigger-binding-manual
@@ -107,7 +109,7 @@ spec:
     - name: triggerEvent
       value: manual
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: trigger-binding-gitlab-commit
@@ -122,7 +124,7 @@ spec:
     - name: triggerEvent
       value: "git-commit"
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: event-listener-manual-run
@@ -133,7 +135,7 @@ spec:
       template:
         name: trigger-template
 ---
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: event-listener-git-commit
