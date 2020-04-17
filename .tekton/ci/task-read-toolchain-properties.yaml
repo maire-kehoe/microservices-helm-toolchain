@@ -1,15 +1,14 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: read-toolchain-properties-task
 spec:
-  inputs:
-    params:
-      - name: task-pvc
-        description: the output pvc
-      - name: continuous-delivery-context-secret
-        description: name of the configmap containing the continuous delivery pipeline context secrets
-        default: cd-secret
+  params:
+    - name: task-pvc
+      description: the output pvc
+    - name: continuous-delivery-context-secret
+      description: name of the configmap containing the continuous delivery pipeline context secrets
+      default: cd-secret
   steps:
     - name: read-toolchain-props
       image: ibmcom/pipeline-base-image

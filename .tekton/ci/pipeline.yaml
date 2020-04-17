@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline
@@ -26,6 +26,8 @@ spec:
     type: image
   # - name: target-cluster
   #   type: cluster
+  workspaces:
+    - name: artifacts
   tasks:
     - name: read-properties
       taskRef:
