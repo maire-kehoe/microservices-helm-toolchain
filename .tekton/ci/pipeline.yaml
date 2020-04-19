@@ -35,7 +35,7 @@ spec:
           workspace: artifacts
     - name: clone-repo
       taskRef:
-        name: clone-repo-task2
+        name: beta-clone-repo-task
       workspaces:
         - name: artifacts
           workspace: artifacts
