@@ -20,10 +20,10 @@ spec:
     - name: chartRoot
       value: Component chart root folder 
   resources:
-  - name: app-image
-    type: image
-  # - name: target-cluster
-  #   type: cluster
+    - name: app-image
+      type: image
+    # - name: target-cluster
+    #   type: cluster
   workspaces:
     - name: artifacts
   tasks:
@@ -32,11 +32,13 @@ spec:
         name: read-toolchain-properties-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
     - name: clone-repo
       taskRef:
         name: clone-repo-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: repository
           value: $(params.repository)
@@ -48,6 +50,7 @@ spec:
         name: record-build-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: appName
           value: $(params.appName)
@@ -57,6 +60,7 @@ spec:
         name: unit-test-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
     - name: containerize
       runAfter: [unit-test]
       taskRef:
@@ -101,6 +105,7 @@ spec:
         name: vulnerability-advisor-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: scanReportFile
           value: 'app-image-va-report.json'
@@ -122,6 +127,7 @@ spec:
         name: vulnerability-record-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: scanReportFile
           value: 'app-image-va-report.json'
@@ -131,6 +137,7 @@ spec:
         name: publish-component-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: policyName
           value: $(params.policyName)
