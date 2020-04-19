@@ -33,119 +33,120 @@ spec:
       workspaces:
         - name: artifacts
           workspace: artifacts
-    - name: clone-repo
-      taskRef:
-        name: clone-repo-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: repository
-          value: $(params.repository)
-        - name: branch
-          value: $(params.branch)
-    - name: record-build
-      runAfter: [clone-repo]
-      taskRef:
-        name: record-build-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: appName
-          value: $(params.appName)
-    - name: unit-test
-      runAfter: [record-build]
-      taskRef:
-        name: unit-test-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-    - name: containerize
-      runAfter: [unit-test]
-      taskRef:
-        name: cr-build-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: additionalTags
-          value: 'latest'
-        - name: additionalTagsScript
-          value: |
-            # Include the clone task output variables in the environment
-            source /artifacts/build.properties
-            # The script is providing tag(s) as output
-            # But logs can be written as error stderr
-            # echo "Providing an image tag including git branch and commit" >&2
-            # Add a specific tag with branch and commit
-            # echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
+    # - name: clone-repo
+    #   taskRef:
+    #     name: clone-repo-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: repository
+    #       value: $(params.repository)
+    #     - name: branch
+    #       value: $(params.branch)
+    # - name: record-build
+    #   runAfter: [clone-repo]
+    #   taskRef:
+    #     name: record-build-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: appName
+    #       value: $(params.appName)
+    # - name: unit-test
+    #   runAfter: [record-build]
+    #   taskRef:
+    #     name: unit-test-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    # - name: containerize
+    #   runAfter: [unit-test]
+    #   taskRef:
+    #     name: cr-build-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: additionalTags
+    #       value: 'latest'
+    #     - name: additionalTagsScript
+    #       value: |
+    #         # Include the clone task output variables in the environment
+    #         source /artifacts/build.properties
+    #         # The script is providing tag(s) as output
+    #         # But logs can be written as error stderr
+    #         # echo "Providing an image tag including git branch and commit" >&2
+    #         # Add a specific tag with branch and commit
+    #         # echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
 
-            # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
-            # e.g. 3-master-50da6912-20181123114435
-            # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
+    #         # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
+    #         # e.g. 3-master-50da6912-20181123114435
+    #         # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
 
-            TIMESTAMP=$( date -u "+%Y%m%d%H%M%S")
-            IMAGE_TAG=${TIMESTAMP}
-            if [ ! -z "${GIT_COMMIT}" ]; then
-              GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 ) 
-              IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
-            fi
-            if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
-            IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
-            # Record image tag
-            #echo "IMAGE_TAG=${IMAGE_TAG}" >> /artifacts/build.properties
-            echo ${IMAGE_TAG}
-      resources:          
-        outputs:
-          - name: builtImage
-            resource: app-image
-    - name: check-vulnerabilities
-      runAfter: [containerize]
-      taskRef:
-        name: vulnerability-advisor-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: scanReportFile
-          value: 'app-image-va-report.json'
-        # - name: maxIteration
-        #   value: '5'
-        # - name: sleepTime
-        #   value: '3'
-        - name: failOnScannedIssues          
-          value: 'false'
-      resources:          
-        inputs:
-          - name: image
-            resource: app-image
-            from:
-              - containerize
-    - name: record-vulnerabilities
-      runAfter: [check-vulnerabilities]
-      taskRef:
-        name: vulnerability-record-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: scanReportFile
-          value: 'app-image-va-report.json'
-    - name: publish-component
-      runAfter: [check-vulnerabilities]
-      taskRef:
-        name: publish-component-task
-      workspaces:
-        - name: artifacts
-          workspace: artifacts
-      params:
-        - name: policyName
-          value: $(params.policyName)
-        - name: umbrellaRepoName
-          value: $(params.umbrellaRepoName)
-        - name: chartRoot
-          value: $(params.chartRoot)
+    #         TIMESTAMP=$( date -u "+%Y%m%d%H%M%S")
+    #         IMAGE_TAG=${TIMESTAMP}
+    #         if [ ! -z "${GIT_COMMIT}" ]; then
+    #           GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 ) 
+    #           IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
+    #         fi
+    #         if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
+    #         IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
+    #         # Record image tag
+    #         #echo "IMAGE_TAG=${IMAGE_TAG}" >> /artifacts/build.properties
+    #         echo ${IMAGE_TAG}
+    #   resources:          
+    #     outputs:
+    #       - name: builtImage
+    #         resource: app-image
+    # - name: check-vulnerabilities
+    #   runAfter: [containerize]
+    #   taskRef:
+    #     name: vulnerability-advisor-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: scanReportFile
+    #       value: 'app-image-va-report.json'
+    #     # - name: maxIteration
+    #     #   value: '5'
+    #     # - name: sleepTime
+    #     #   value: '3'
+    #     - name: failOnScannedIssues          
+    #       value: 'false'
+    #   resources:          
+    #     inputs:
+    #       - name: image
+    #         resource: app-image
+    #         from:
+    #           - containerize
+    # - name: record-vulnerabilities
+    #   runAfter: [check-vulnerabilities]
+    #   taskRef:
+    #     name: vulnerability-record-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: scanReportFile
+    #       value: 'app-image-va-report.json'
+    # - name: publish-component
+    #   runAfter: [check-vulnerabilities]
+    #   taskRef:
+    #     name: publish-component-task
+    #   workspaces:
+    #     - name: artifacts
+    #       workspace: artifacts
+    #   params:
+    #     - name: policyName
+    #       value: $(params.policyName)
+    #     - name: umbrellaRepoName
+    #       value: $(params.umbrellaRepoName)
+    #     - name: chartRoot
+    #       value: $(params.chartRoot)
+    #================================================      
     # - name: cluster-setup
     #   taskRef:
     #     name: fetch-iks-cluster-config
