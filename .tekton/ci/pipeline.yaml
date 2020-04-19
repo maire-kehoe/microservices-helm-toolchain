@@ -4,8 +4,6 @@ metadata:
   name: pipeline
 spec:
   params:
-    - name: pipeline-pvc
-      description: the pipeline pvc name
     - name: repository
       description: the git repo
     - name: branch
@@ -32,15 +30,14 @@ spec:
     - name: read-properties
       taskRef:
         name: read-toolchain-properties-task
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
+      workspaces:
+        - name: artifacts
     - name: clone-repo
       taskRef:
         name: clone-repo-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: repository
           value: $(params.repository)
         - name: branch
@@ -49,25 +46,24 @@ spec:
       runAfter: [clone-repo]
       taskRef:
         name: record-build-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: appName
           value: $(params.appName)
     - name: unit-test
       runAfter: [record-build]
       taskRef:
         name: unit-test-task
-      params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
+      workspaces:
+        - name: artifacts
     - name: containerize
       runAfter: [unit-test]
       taskRef:
         name: cr-build-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: additionalTags
           value: 'latest'
         - name: additionalTagsScript
@@ -103,9 +99,9 @@ spec:
       runAfter: [containerize]
       taskRef:
         name: vulnerability-advisor-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: scanReportFile
           value: 'app-image-va-report.json'
         # - name: maxIteration
@@ -124,18 +120,18 @@ spec:
       runAfter: [check-vulnerabilities]
       taskRef:
         name: vulnerability-record-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: scanReportFile
           value: 'app-image-va-report.json'
     - name: publish-component
       runAfter: [check-vulnerabilities]
       taskRef:
         name: publish-component-task
+      workspaces:
+        - name: artifacts
       params:
-        - name: task-pvc
-          value: $(params.pipeline-pvc)
         - name: policyName
           value: $(params.policyName)
         - name: umbrellaRepoName
