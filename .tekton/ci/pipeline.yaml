@@ -67,6 +67,7 @@ spec:
         name: cr-build-task
       workspaces:
         - name: artifacts
+          workspace: artifacts
       params:
         - name: additionalTags
           value: 'latest'
