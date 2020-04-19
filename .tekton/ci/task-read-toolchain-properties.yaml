@@ -4,9 +4,15 @@ metadata:
   name: read-toolchain-properties-task
 spec:
   params:
+    - name: repository
+      description: The git repository input for the pipeline
+      default: "" # if empty will be inferred from the toolchain definition
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
+  results:
+  - name: repository
+    description: The git repository input for the pipeline
   workspaces:
     - name: artifacts
   steps:
@@ -62,6 +68,8 @@ spec:
           echo "TRIGGERED_BY='${TRIGGERED_BY}'" >> ./build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
           cat ./build.properties | grep -v -i password
+          # Record repository task result
+          echo -n "${REPOSITORY_URL}" > $(results.repository.path)
       volumeMounts:
         - mountPath: /cd-config
           name: cd-config-volume

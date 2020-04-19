@@ -33,17 +33,17 @@ spec:
       workspaces:
         - name: artifacts
           workspace: artifacts
-    # - name: clone-repo
-    #   taskRef:
-    #     name: clone-repo-task
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: artifacts
-    #   params:
-    #     - name: repository
-    #       value: $(params.repository)
-    #     - name: branch
-    #       value: $(params.branch)
+    - name: clone-repo
+      taskRef:
+        name: clone-repo-task2
+      workspaces:
+        - name: artifacts
+          workspace: artifacts
+      params:
+        - name: repository
+          value: $(tasks.read-properties.results.repository)
+        - name: branch
+          value: $(params.branch)
     # - name: record-build
     #   runAfter: [clone-repo]
     #   taskRef:
