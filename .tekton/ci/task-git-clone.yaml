@@ -92,9 +92,8 @@ spec:
       env:
         - name: REPOSITORY
           value: $(inputs.params.repository)
-      command: ["/bin/bash", "-c"]
-      args:
-        - |
+      script: |
+          #!/bin/bash
           set -e -o pipefail
           PIPELINE_DEBUG=1
           if [ $PIPELINE_DEBUG == 1 ]; then
@@ -194,9 +193,8 @@ spec:
           value: $(inputs.params.propertiesFile)
         - name: JSON_FILE_GIT_CREDENTIALS
           value: $(inputs.params.gitCredentialsJsonFile)
-      command: ["/bin/sh", "-c"]
-      args:
-        - |
+      script: |
+          #!/bin/sh
           set -e -o pipefail
           PIPELINE_DEBUG=1
           if [ $PIPELINE_DEBUG == 1 ]; then
