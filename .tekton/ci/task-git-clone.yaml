@@ -63,7 +63,7 @@ spec:
       default: "0"
   workspaces:
     - name: artifacts
-      description: the root directory where git repo will be cloned
+      description: the pipeline artifacts shared directory
   stepTemplate:
     env:
       - name: API_KEY
@@ -209,7 +209,6 @@ spec:
           # Add the proper creds to the git repository
           GIT_URL=$(echo "$REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
 
-          cd /artifacts
           if [ "$REVISION" ]; then
             # check if the branch exists (that may not be the case in case of a pipeline-run re-run)
             echo "Fetching specific -${REVISION}- commit"
@@ -301,24 +300,24 @@ spec:
           cd $current_dir
           if [ "$PROPERTIES_FILE" ]; then
             # Ensure directory is there
-            mkdir -p /artifacts/$(dirname "$PROPERTIES_FILE")
-            echo "GIT_URL=$REPOSITORY" >> /artifacts/$PROPERTIES_FILE
-            echo "GIT_BRANCH=$BRANCH" >> /artifacts/$PROPERTIES_FILE
-            echo "GIT_COMMIT=$GIT_COMMIT" >> /artifacts/$PROPERTIES_FILE
+            mkdir -p $(dirname "$PROPERTIES_FILE")
+            echo "GIT_URL=$REPOSITORY" >> $PROPERTIES_FILE
+            echo "GIT_BRANCH=$BRANCH" >> $PROPERTIES_FILE
+            echo "GIT_COMMIT=$GIT_COMMIT" >> $PROPERTIES_FILE
             # Change  write access permission to allow subsequent task(s) to update if needed
-            chmod go+rw /artifacts/$PROPERTIES_FILE
+            chmod go+rw $PROPERTIES_FILE
             echo "$PROPERTIES_FILE content:"
-            cat /artifacts/$PROPERTIES_FILE
+            cat $PROPERTIES_FILE
           fi
           if [ "$JSON_FILE_GIT_CREDENTIALS" ]; then
             # Ensure directory is there
-            mkdir -p /artifacts/$(dirname "$JSON_FILE_GIT_CREDENTIALS")
+            mkdir -p $(dirname "$JSON_FILE_GIT_CREDENTIALS")
             # Create a JSON file as output of this step to store the git credentials for future use
-            echo "{" > "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
-            echo "\"GIT_REPOSITORY\":\"${REPOSITORY}\"," >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
-            echo "\"GIT_AUTH_USER\":\"${GIT_AUTH_USER}\"," >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
-            echo "\"GIT_TOKEN\":\"${GIT_TOKEN}\"" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
-            echo "}" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+            echo "{" > "${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_REPOSITORY\":\"${REPOSITORY}\"," >> "${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_AUTH_USER\":\"${GIT_AUTH_USER}\"," >> "${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_TOKEN\":\"${GIT_TOKEN}\"" >> "${JSON_FILE_GIT_CREDENTIALS}"
+            echo "}" >> "${JSON_FILE_GIT_CREDENTIALS}"
           fi
       volumeMounts:
         - mountPath: /steps
