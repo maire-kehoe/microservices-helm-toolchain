@@ -257,7 +257,11 @@ spec:
             git checkout -q $REVISION
           fi
           GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
-
+          ##########################################################################
+          pwd
+          echo $current_dir
+          ls -alR
+          ##########################################################################
           # If a Pull Request/Merge Request branch is specified, then
           # execute the git commands to have the cloned git repository directory content
           # to be the result of the merge for pull request/merge request
