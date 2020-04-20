@@ -258,8 +258,100 @@ spec:
           fi
           echo "STEP11"
           ls -al
-          GIT_COMMIT=$( git show-ref --head | head -n1 | awk '{print $1}' )
+          GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
           echo "STEP22"
+          ##########################################################################
+          pwd
+          echo $current_dir
+          ls -al
+          ##########################################################################
+          # If a Pull Request/Merge Request branch is specified, then
+          # execute the git commands to have the cloned git repository directory content
+          # to be the result of the merge for pull request/merge request
+          if [ "${PR_BRANCH}" ]; then
+            echo "Performing Pull Request Checkout & Merge"
+            git config --global user.email "cdtektonpipeline@ibm.com"
+            git config --global user.name "CD Tekton Pipeline"
+            # Clear GIT_COMMIT as the outcome if this task is a non yet known commit
+            GIT_COMMIT=""
+            if [ -z "$PR_REPOSITORY" ] || [ "$PR_REPOSITORY" == "$REPOSITORY" ]; then
+              # Assuming the PR is not coming from a fork as $PR_REPOSITORY is empty or equals to $REPOSITORY
+              # Make the manual steps that a merge request action is doing
+              git fetch -q origin "${PR_BRANCH}"
+              if [ "${PR_REVISION}" ]; then
+                if git merge "${PR_REVISION}"; then
+                  echo "git merge ${PR_REVISION} done"
+                else
+                  exit 1
+                fi
+              else
+                if git merge "origin/${PR_BRANCH}"; then
+                  echo "git merge origin/${PR_BRANCH} done"
+                else
+                  exit 1
+                fi
+              fi
+              echo "git merge of $GIT_REPOSITORY (pr_branch ${PR_BRANCH} - pr_commit ${PR_REVISION}) to (branch $BRANCH - commit $REVISION) done in directory $DIRECTORY_NAME"
+            else
+              # Assuming the PR is from a fork
+              # Expect that the same creds will be sufficient for the git pull from the forked repository
+              GIT_PR_REPO_URL=$(echo "$PR_REPOSITORY" | sed -e "s/:\/\//:\/\/$GIT_AUTH_USER:$GIT_TOKEN@/g")
+              # Make the manual steps that a merge request action is doing
+              # Step 1
+              if git pull "${GIT_PR_REPO_URL}" "${PR_BRANCH}"; then
+                echo "git pull ${PR_REPOSITORY} ${PR_BRANCH} done"
+              else
+                exit 1
+              fi
+              if [ "$PR_REVISION" ]; then
+                git checkout -q "$PR_REVISION"
+              fi
+              # create a specific branch to hold the PR state
+              git checkout -q -b cd-tekton-pipeline-temp-branch-for-pr
+              # Step 2
+              git checkout -q "${BRANCH}"
+              if git merge cd-tekton-pipeline-temp-branch-for-pr; then
+                echo "git merge of $PR_REPOSITORY (pr_branch ${PR_BRANCH} - pr_commit ${PR_REVISION}) to $REPOSITORY (branch $BRANCH - commit $REVISION) done in directory $DIRECTORY_NAME"
+              else
+                exit 1
+              fi
+            fi
+          else
+            echo "git clone of $GIT_REPOSITORY (branch $BRANCH - commit $GIT_COMMIT) done in directory $DIRECTORY_NAME"
+          fi
+          ##########################################################################
+          pwd
+          echo $current_dir
+          ls -alR
+          ##########################################################################
+          cd $current_dir
+          if [ "$PROPERTIES_FILE" ]; then
+            # Ensure directory is there
+            mkdir -p /artifacts/$(dirname "$PROPERTIES_FILE")
+            echo "GIT_URL=$REPOSITORY" >> /artifacts/$PROPERTIES_FILE
+            echo "GIT_BRANCH=$BRANCH" >> /artifacts/$PROPERTIES_FILE
+            echo "GIT_COMMIT=$GIT_COMMIT" >> /artifacts/$PROPERTIES_FILE
+            # Change  write access permission to allow subsequent task(s) to update if needed
+            chmod go+rw /artifacts/$PROPERTIES_FILE
+            echo "$PROPERTIES_FILE content:"
+            cat /artifacts/$PROPERTIES_FILE
+          fi
+          if [ "$JSON_FILE_GIT_CREDENTIALS" ]; then
+            # Ensure directory is there
+            mkdir -p /artifacts/$(dirname "$JSON_FILE_GIT_CREDENTIALS")
+            # Create a JSON file as output of this step to store the git credentials for future use
+            echo "{" > "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_REPOSITORY\":\"${REPOSITORY}\"," >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_AUTH_USER\":\"${GIT_AUTH_USER}\"," >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+            echo "\"GIT_TOKEN\":\"${GIT_TOKEN}\"" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+            echo "}" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
+          fi
+          # Record task results
+          echo -n "${REPOSITORY}" > $(results.repository.path)
+          echo -n "${BRANCH}" > $(results.branch.path)
+          echo -n "${GIT_COMMIT}" > $(results.git-commit.path)
+          echo -n "${GIT_AUTH_USER}" > $(results.git-user.path)
+          echo -n "${GIT_TOKEN}" > $(results.git-token.path)
       volumeMounts:
         - mountPath: /steps
           name: steps-volume
