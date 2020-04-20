@@ -102,8 +102,6 @@ spec:
               pwd
               ls -alR
               env
-              trap env EXIT
-              set -x
           fi
 
           TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
@@ -206,8 +204,6 @@ spec:
               pwd
               ls -alR
               env
-              trap env EXIT
-              set -x
           fi
           ############################
           # Workaround until a null/empty param can be flowing to Task
