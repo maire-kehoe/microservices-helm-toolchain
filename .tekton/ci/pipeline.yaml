@@ -36,12 +36,13 @@ spec:
     - name: clone-repo
       taskRef:
         name: beta-clone-repo-task
+      runAfter: [read-toolchain]
       workspaces:
         - name: artifacts
           workspace: pipeline-artifacts
       params:
         - name: repository
-          value: $(tasks.read-properties.results.repository)
+          value: $(tasks.read-toolchain.results.repository)
         - name: branch
           value: $(params.branch)
     # - name: record-build
