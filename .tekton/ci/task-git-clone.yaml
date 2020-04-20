@@ -85,6 +85,8 @@ spec:
         - |
           set -e -o pipefail
           set -x
+          pwd
+          ls -al
           if [ $PIPELINE_DEBUG == 1 ]; then
               pwd
               env
@@ -187,6 +189,8 @@ spec:
         - |
           set -e -o pipefail
           set -x
+          pwd
+          ls -al
           if [ $PIPELINE_DEBUG == 1 ]; then
               pwd
               env
