@@ -61,6 +61,17 @@ spec:
     - name: pipeline-debug
       description: Pipeline debug mode
       default: "0"
+  results:
+  - name: repository
+    description: The cloned repository
+  - name: branch
+    description: The active branch for the repository
+  - name: git-commit
+    description: The current commit id that was cloned
+  - name: git-user
+    description: The auth user that cloned the repository
+  - name: git-token
+    description: The auth token that cloned the repository
   workspaces:
     - name: artifacts
       description: the artifacts folder for this task
@@ -324,6 +335,12 @@ spec:
             echo "\"GIT_TOKEN\":\"${GIT_TOKEN}\"" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
             echo "}" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
           fi
+          # Record task results
+          echo -n "${REPOSITORY}" > $(results.repository.path)
+          echo -n "${BRANCH}" > $(results.branch.path)
+          echo -n "${GIT_COMMIT}" > $(results.git-commit.path)
+          echo -n "${GIT_AUTH_USER}" > $(results.git-user.path)
+          echo -n "${GIT_TOKEN}" > $(results.git-token.path)
       volumeMounts:
         - mountPath: /steps
           name: steps-volume
