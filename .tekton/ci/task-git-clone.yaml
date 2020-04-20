@@ -316,6 +316,11 @@ spec:
           else
             echo "git clone of $GIT_REPOSITORY (branch $BRANCH - commit $GIT_COMMIT) done in directory $DIRECTORY_NAME"
           fi
+          ##########################################################################
+          pwd
+          echo $current_dir
+          ls -alR
+          ##########################################################################
           cd $current_dir
           if [ "$PROPERTIES_FILE" ]; then
             # Ensure directory is there
