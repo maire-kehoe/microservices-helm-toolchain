@@ -96,10 +96,10 @@ spec:
       args:
         - |
           set -e -o pipefail
-          set -x
-          ls -alR
           if [ $PIPELINE_DEBUG == 1 ]; then
+              set -x
               pwd
+              ls -alR
               env
               trap env EXIT
               set -x
@@ -198,10 +198,11 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - |
-          set -x
-          ls -alR
+          set -e -o pipefail
           if [ $PIPELINE_DEBUG == 1 ]; then
+              set -x
               pwd
+              ls -alR
               env
               trap env EXIT
               set -x

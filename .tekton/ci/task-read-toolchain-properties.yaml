@@ -10,6 +10,9 @@ spec:
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
+    - name: pipeline-debug
+      description: Pipeline debug mode
+      default: "0"
   results:
   - name: toolchain-region
     description: The region where the toolchain is located
