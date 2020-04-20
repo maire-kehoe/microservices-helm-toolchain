@@ -258,7 +258,7 @@ spec:
           fi
           echo "STEP11"
           ls -al
-          GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
+          GIT_COMMIT=$( git show-ref --head | head -n1 | awk '{print $1}' )
           echo "STEP22"
       volumeMounts:
         - mountPath: /steps
