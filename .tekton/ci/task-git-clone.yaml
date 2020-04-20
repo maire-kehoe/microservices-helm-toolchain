@@ -256,11 +256,14 @@ spec:
             # Point the HEAD to the specific revision
             git checkout -q $REVISION
           fi
+          echo "STEP11"
+          ls -al
           GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
+          echo "STEP22"
           ##########################################################################
           pwd
           echo $current_dir
-          ls -alR
+          ls -al
           ##########################################################################
           # If a Pull Request/Merge Request branch is specified, then
           # execute the git commands to have the cloned git repository directory content
