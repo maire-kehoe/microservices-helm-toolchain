@@ -25,20 +25,20 @@ spec:
     # - name: target-cluster
     #   type: cluster
   workspaces:
-    - name: artifacts
+    - name: pipeline-artifacts
   tasks:
-    - name: read-properties
+    - name: read-toolchain
       taskRef:
         name: read-toolchain-properties-task
       workspaces:
         - name: artifacts
-          workspace: artifacts
+          workspace: pipeline-artifacts
     - name: clone-repo
       taskRef:
         name: beta-clone-repo-task
       workspaces:
         - name: artifacts
-          workspace: artifacts
+          workspace: pipeline-artifacts
       params:
         - name: repository
           value: $(tasks.read-properties.results.repository)
@@ -50,7 +50,7 @@ spec:
     #     name: record-build-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     #   params:
     #     - name: appName
     #       value: $(params.appName)
@@ -60,14 +60,14 @@ spec:
     #     name: unit-test-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     # - name: containerize
     #   runAfter: [unit-test]
     #   taskRef:
     #     name: cr-build-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     #   params:
     #     - name: additionalTags
     #       value: 'latest'
@@ -106,7 +106,7 @@ spec:
     #     name: vulnerability-advisor-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     #   params:
     #     - name: scanReportFile
     #       value: 'app-image-va-report.json'
@@ -128,7 +128,7 @@ spec:
     #     name: vulnerability-record-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     #   params:
     #     - name: scanReportFile
     #       value: 'app-image-va-report.json'
@@ -138,7 +138,7 @@ spec:
     #     name: publish-component-task
     #   workspaces:
     #     - name: artifacts
-    #       workspace: artifacts
+    #       workspace: pipeline-artifacts
     #   params:
     #     - name: policyName
     #       value: $(params.policyName)

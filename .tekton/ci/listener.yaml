@@ -77,7 +77,7 @@ spec:
           #   resourceRef:
           #     name: dev-cluster
         workspaces:
-          - name: artifacts
+          - name: pipeline-artifacts
             persistentVolumeClaim:
               claimName: pipelinerun-$(uid)-pvc
         params:
