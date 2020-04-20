@@ -11,8 +11,26 @@ spec:
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
   results:
+  - name: toolchain-region
+    description: The region where the toolchain is located
+  - name: toolchain-id
+    description: The uuid for the toolchain definition
   - name: repository
-    description: The git repository input for the pipeline
+    description: The code repo used as input for the pipeline
+  - name: trigger-type
+    description: Type of the trigger that caused this pipelinerun to occur
+  - name: trigger-name
+    description: Name of the trigger that caused this pipelinerun to occur
+  - name: trigger-by
+    description: Information on the operator that caused this pipelinerun to trigger
+  - name: build-number
+    description: A human readable pipeline build number (incrementing integer counter)
+  - name: pipeline-id
+    description: The uuid for the pipeline definition
+  - name: pipeline-run-name
+    description: The name of this pipeline run
+  - name: pipeline-run-id
+    description: The uuid of this pipeline run   
   workspaces:
     - name: artifacts
   steps:
@@ -68,8 +86,17 @@ spec:
           echo "TRIGGERED_BY='${TRIGGERED_BY}'" >> ./build.properties
           echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
           cat ./build.properties | grep -v -i password
-          # Record repository task result
+          # Record task results
+          echo -n "${TOOLCHAIN_REGION}" > $(results.toolchain-region.path)
+          echo -n "${TOOLCHAIN_ID}" > $(results.toolchain-id.path)
           echo -n "${REPOSITORY_URL}" > $(results.repository.path)
+          echo -n "${TRIGGER_TYPE}" > $(results.trigger-type.path)
+          echo -n "${TRIGGER_NAME}" > $(results.trigger-name.path)
+          echo -n "${TRIGGERED_BY}" > $(results.trigger-by.path)
+          echo -n "${BUILD_NUMBER}" > $(results.build-number.path)
+          echo -n "${PIPELINE_ID}" > $(results.pipeline-id.path)
+          echo -n "${PIPELINE_RUN_NAME}" > $(results.pipeline-run-name.path)
+          echo -n "${PIPELINE_RUN_ID}" > $(results.pipeline-run-id.path)
       volumeMounts:
         - mountPath: /cd-config
           name: cd-config-volume
