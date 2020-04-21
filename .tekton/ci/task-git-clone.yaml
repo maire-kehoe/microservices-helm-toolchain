@@ -95,7 +95,6 @@ spec:
       script: |
           #!/bin/bash
           set -e -o pipefail
-          PIPELINE_DEBUG=1
           if [ $PIPELINE_DEBUG == 1 ]; then
               set -x
               pwd
@@ -196,7 +195,6 @@ spec:
       script: |
           #!/bin/sh
           #set -e -o pipefail
-          PIPELINE_DEBUG=1
           if [ $PIPELINE_DEBUG == 1 ]; then
               set -x
               pwd
@@ -254,15 +252,9 @@ spec:
             # Point the HEAD to the specific revision
             git checkout -q $REVISION
           fi
-          echo "STEP11"
           ls -al
           GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
-          echo "STEP22"
-          ##########################################################################
-          pwd
-          echo $current_dir
-          ls -al
-          ##########################################################################
+          
           # If a Pull Request/Merge Request branch is specified, then
           # execute the git commands to have the cloned git repository directory content
           # to be the result of the merge for pull request/merge request
@@ -317,11 +309,7 @@ spec:
           else
             echo "git clone of $GIT_REPOSITORY (branch $BRANCH - commit $GIT_COMMIT) done in directory $DIRECTORY_NAME"
           fi
-          ##########################################################################
-          pwd
-          echo $current_dir
-          ls -alR
-          ##########################################################################
+          ls -al
           cd $current_dir
           if [ "$PROPERTIES_FILE" ]; then
             # Ensure directory is there
