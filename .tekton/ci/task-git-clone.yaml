@@ -62,9 +62,9 @@ spec:
       description: Pipeline debug mode
       default: "0"
   results:
-  - name: repository
+  - name: git-repository
     description: The cloned repository
-  - name: branch
+  - name: git-branch
     description: The active branch for the repository
   - name: git-commit
     description: The current commit id that was cloned
@@ -254,7 +254,7 @@ spec:
           fi
           ls -al
           GIT_COMMIT=$(git show-ref --head | head -n1 | awk '{print $1}')
-          
+
           # If a Pull Request/Merge Request branch is specified, then
           # execute the git commands to have the cloned git repository directory content
           # to be the result of the merge for pull request/merge request
@@ -333,8 +333,8 @@ spec:
             echo "}" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
           fi
           # Record task results
-          echo -n "${REPOSITORY}" > $(results.repository.path)
-          echo -n "${BRANCH}" > $(results.branch.path)
+          echo -n "${REPOSITORY}" > $(results.git-repository.path)
+          echo -n "${BRANCH}" > $(results.git-branch.path)
           echo -n "${GIT_COMMIT}" > $(results.git-commit.path)
           echo -n "${GIT_AUTH_USER}" > $(results.git-user.path)
           echo -n "${GIT_TOKEN}" > $(results.git-token.path)

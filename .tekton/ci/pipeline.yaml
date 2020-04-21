@@ -45,16 +45,26 @@ spec:
           value: $(tasks.read-toolchain.results.repository)
         - name: branch
           value: $(params.branch)
-    # - name: record-build
-    #   runAfter: [clone-repo]
-    #   taskRef:
-    #     name: record-build-task
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: pipeline-artifacts
-    #   params:
-    #     - name: appName
-    #       value: $(params.appName)
+    - name: record-build
+      runAfter: [clone-repo]
+      taskRef:
+        name: record-build-task
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-artifacts
+      params:
+        - name: app-name
+          value: $(params.appName)
+        - name: toolchain-id
+          value: $(tasks.read-toolchain.results.toolchain-id)
+        - name: build-number
+          value: $(tasks.read-toolchain.results.build-number)
+        - name: repository
+          value: $(tasks.clone-repo.results.git-repository)
+        - name: branch
+          value: $(tasks.clone-repo.results.git-branch)
+        - name: commit-id
+          value: $(tasks.clone-repo.results.git-commit)
     # - name: unit-test
     #   runAfter: [record-build]
     #   taskRef:
