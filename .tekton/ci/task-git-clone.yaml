@@ -194,7 +194,7 @@ spec:
         - name: JSON_FILE_GIT_CREDENTIALS
           value: $(inputs.params.gitCredentialsJsonFile)
       script: |
-          #!/bin/sh
+          #!/bin/bash
           set -e -o pipefail
           PIPELINE_DEBUG=1
           if [ $PIPELINE_DEBUG == 1 ]; then
