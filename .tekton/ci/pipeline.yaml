@@ -45,8 +45,8 @@ spec:
           value: $(tasks.read-toolchain.results.repository)
         - name: branch
           value: $(params.branch)
-        - name: ibmcloudApi
-          value: $(tasks.read-toolchain.results.cloud-api)
+        - name: ibmcloud-api
+          value: $(tasks.read-toolchain.results.ibmcloud-api)
     - name: record-build
       runAfter: [clone-repo]
       taskRef:
@@ -67,8 +67,8 @@ spec:
           value: $(tasks.clone-repo.results.git-branch)
         - name: commit-id
           value: $(tasks.clone-repo.results.git-commit)
-        - name: ibmcloudApi
-          value: $(tasks.read-toolchain.results.cloud-api)
+        - name: ibmcloud-api
+          value: $(tasks.read-toolchain.results.ibmcloud-api)
     # - name: unit-test
     #   runAfter: [record-build]
     #   taskRef:

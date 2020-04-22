@@ -16,7 +16,7 @@ spec:
   results:
   - name: toolchain-region
     description: The region where the toolchain is located
-  - name: cloud-api
+  - name: ibmcloud-api
     description: The cloud api endpoint based on toolchain region
   - name: toolchain-id
     description: The uuid for the toolchain definition
@@ -88,8 +88,9 @@ spec:
           fi
 
           # Record task results
+          set -x
           echo -n "${TOOLCHAIN_REGION}" > $(results.toolchain-region.path)
-          echo -n "${IBM_CLOUD_API}" > $(results.cloud-api.path)
+          echo -n "${IBM_CLOUD_API}" > $(results.ibmcloud-api.path)
           echo -n "${TOOLCHAIN_ID}" > $(results.toolchain-id.path)
           echo -n "${REPOSITORY_URL}" > $(results.repository.path)
           echo -n "${TRIGGER_TYPE}" > $(results.trigger-type.path)

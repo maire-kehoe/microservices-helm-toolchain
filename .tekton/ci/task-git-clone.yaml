@@ -4,7 +4,7 @@ metadata:
   name: beta-clone-repo-task
 spec:
   params:
-    - name: ibmcloudApi
+    - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
     - name: continuous-delivery-context-secret
@@ -139,7 +139,7 @@ spec:
           if [ -z "$GIT_TOKEN" ]; then
             echo "Fetching token for $REPOSITORY"
             ibmcloud config --check-version false
-            ibmcloud login -a $(inputs.params.ibmcloudApi) -r $TOOLCHAIN_REGION --apikey $API_KEY
+            ibmcloud login -a $(inputs.params.ibmcloud-api) -r $TOOLCHAIN_REGION --apikey $API_KEY
             if [ "$(inputs.params.resourceGroup)" ]; then
               ibmcloud target -g $(inputs.params.resourceGroup)
             fi
