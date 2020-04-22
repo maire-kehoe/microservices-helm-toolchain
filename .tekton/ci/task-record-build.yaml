@@ -19,7 +19,7 @@ spec:
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
-    - name: ibmcloudApi
+    - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
   workspaces:

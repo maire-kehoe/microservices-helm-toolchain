@@ -7,7 +7,7 @@ spec:
     params:
       - name: task-pvc
         description: the task pvc - this is the volume where the files (Dockerfile etc..) are expected to be
-      - name: ibmcloudApi
+      - name: ibmcloud-api
         description: the ibmcloud api
         default: https://cloud.ibm.com
       - name: continuous-delivery-context-secret
