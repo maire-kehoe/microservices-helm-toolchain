@@ -6,7 +6,7 @@ spec:
   params:
     - name: ibmcloudApi
       description: the ibmcloud api
-      default: https://test.cloud.ibm.com
+      default: https://cloud.ibm.com
     - name: continuous-delivery-context-secret
       description: name of the secret containing the continuous delivery pipeline context secrets
       default: cd-secret
@@ -133,7 +133,7 @@ spec:
             GIT_AUTH_USER="x-token-auth"
           else
             GIT_AUTH_USER="x-token-auth"
-          fi;
+          fi
 
           GIT_TOKEN="$(inputs.params.gitAccessToken)"
           if [ -z "$GIT_TOKEN" ]; then
@@ -333,6 +333,7 @@ spec:
             echo "}" >> "/artifacts/${JSON_FILE_GIT_CREDENTIALS}"
           fi
           # Record task results
+          set -x
           echo -n "${REPOSITORY}" > $(results.git-repository.path)
           echo -n "${BRANCH}" > $(results.git-branch.path)
           echo -n "${GIT_COMMIT}" > $(results.git-commit.path)

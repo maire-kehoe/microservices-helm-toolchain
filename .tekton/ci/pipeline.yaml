@@ -18,7 +18,7 @@ spec:
     - name: umbrellaRepoName
       description: Umbrella repo name
     - name: chartRoot
-      value: Component chart root folder 
+      value: Component chart root folder
   resources:
     - name: app-image
       type: image
@@ -45,6 +45,8 @@ spec:
           value: $(tasks.read-toolchain.results.repository)
         - name: branch
           value: $(params.branch)
+        - name: ibmcloudApi
+          value: $(tasks.read-toolchain.results.cloud-api)
     - name: record-build
       runAfter: [clone-repo]
       taskRef:
@@ -65,6 +67,8 @@ spec:
           value: $(tasks.clone-repo.results.git-branch)
         - name: commit-id
           value: $(tasks.clone-repo.results.git-commit)
+        - name: ibmcloudApi
+          value: $(tasks.read-toolchain.results.cloud-api)
     # - name: unit-test
     #   runAfter: [record-build]
     #   taskRef:

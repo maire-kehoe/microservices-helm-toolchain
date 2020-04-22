@@ -19,6 +19,9 @@ spec:
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
+    - name: ibmcloudApi
+      description: the ibmcloud api
+      default: https://cloud.ibm.com
   workspaces:
     - name: artifacts
       description: the artifacts folder for this task
@@ -116,7 +119,9 @@ spec:
         - name: GIT_BRANCH
           value: $(inputs.params.branch)   
         - name: GIT_COMMIT
-          value: $(inputs.params.commit-id)   
+          value: $(inputs.params.commit-id)
+        - name: IBM_CLOUD_API
+          value: $(inputs.params.ibmcloudApi)   
         - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
@@ -138,7 +143,7 @@ spec:
           cat ./build.properties | grep -v -i password
           BUILD_STATUS=pass
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
-          ibmcloud login --apikey ${IBM_CLOUD_API_KEY} --no-region
+          ibmcloud login --apikey ${IBM_CLOUD_API_KEY} -a ${IBM_CLOUD_API} --no-region
           set -x
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
       volumeMounts:
