@@ -78,13 +78,14 @@ spec:
           set -x
           set -e -o pipefail
           TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
-          TOOLCHAIN_REGION=$(jq -r '.region_id' /cd-config/toolchain.json | awk -F: '{print $3}')
+          RAW_REGION=$(jq -r '.region_id' /cd-config/toolchain.json)
+          TOOLCHAIN_REGION=$(echo ${RAW_REGION} | awk -F: '{print $3}')
           REPO_TOOL_INT=$(jq -r '.services[] | select(.instance_id=="'"${PIPELINE_ID}"'") | .parameters.services[0]' /cd-config/toolchain.json)
           REPOSITORY_URL=$(jq -r '.services[] | select (.toolchain_binding.name=="'"${REPO_TOOL_INT}"'") | .parameters.repo_url' /cd-config/toolchain.json)
 
-          if [[ "$TOOLCHAIN_REGION" == *:ys1:* ]]; then
+          if [[ "$RAW_REGION" == *:ys1:* ]]; then
             IBM_CLOUD_API="https://test.cloud.ibm.cloud"
-          elif [ "$GIT_SERVICE_TYPE" == "githubpublic" ]; then
+          else
             IBM_CLOUD_API="https://cloud.ibm.cloud"
           fi
 
