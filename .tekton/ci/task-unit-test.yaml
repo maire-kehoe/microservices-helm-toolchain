@@ -50,7 +50,7 @@ spec:
           # and until 0.11 - https://ibm.ent.box.com/notes/599948660131?s=rqk76zkkdsz1cenvpw0ad8enxul6j0nv
           export HOME=/root && source ~/.nvm/nvm.sh
           ##########################################################################
-          source ./build.properties
+          #source ./build.properties
           if [[ "$IBM_CLOUD_API" == *test* ]]; then
             export IBM_CLOUD_DEVOPS_ENV=dev
           fi
