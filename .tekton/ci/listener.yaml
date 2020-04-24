@@ -13,8 +13,8 @@ spec:
     #   description: the name of the cluster to target
     # - name: clusterTargetNamespace
     #   default: prod-tkn
-    - name: appName
-    - name: chartRoot
+    - name: app-name
+    - name: chart-root
       default: chart
   resourcetemplates:
     # CD secret to provide API_KEY to access toolchain information
@@ -87,14 +87,14 @@ spec:
             value: $(params.branch)
           # - name: clusterTargetNamespace
           #   value: $(params.clusterTargetNamespace)
-          - name: appName
-            value: $(params.appName)
-          - name: policyName
-            value: $(params.policyName)
-          - name: umbrellaRepoName
-            value: $(params.umbrellaRepoName)
-          - name: chartRoot
-            value: $(params.chartRoot)
+          - name: app-name
+            value: $(params.app-name)
+          - name: policy-name
+            value: $(params.policy-name)
+          - name: umbrella-repo-name
+            value: $(params.umbrella-repo-name)
+          - name: chart-root
+            value: $(params.chart-root)
 ---
 apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding
