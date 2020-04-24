@@ -27,83 +27,6 @@ spec:
       description: the artifacts folder for this task
       mountPath: /artifacts
   steps:
-    # - name: record-git-creds
-    #   image: ibmcom/pipeline-base-image
-    #   workingDir: /artifacts
-    #   command: ["/bin/bash", "-c"]
-    #   args:
-    #     - |
-    #       set -e -o pipefail
-    #       ls -al
-    #       # env
-    #       # source ./build.properties
-    #       # Record git info to later contribute to umbrella chart repo
-    #       # GIT_COMMIT=$(git rev-parse HEAD)
-    #       # GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    #       # GIT_REPO_NAME=$(basename `git rev-parse --show-toplevel`)
-    #       GIT_REMOTE_URL=$( git config --get remote.origin.url )
-    #       GIT_USER=$( echo ${GIT_REMOTE_URL} | cut -d/ -f3 | cut -d: -f1 )
-    #       GIT_PASSWORD=$( echo ${GIT_REMOTE_URL} | cut -d: -f3 | cut -d@ -f1 )
-    #       echo "GIT_USER=${GIT_USER}" >> ./build.properties
-    #       echo "GIT_PASSWORD=${GIT_PASSWORD}" >> ./build.properties
-    #       echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
-    #       cat ./build.properties | grep -v -i password
-    # - name: record-build-props
-    #   image: ibmcom/pipeline-base-image
-    #   workingDir: /artifacts
-    #   env:
-    #     - name: PIPELINE_RUN_NAME
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.labels['tekton.dev/pipelineRun']
-    #     - name: PIPELINE_RUN_ID
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/tekton-pipeline']
-    #     - name: BUILD_NUMBER
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/build-number']
-    #     - name: PIPELINE_ID
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/pipeline-id']
-    #     - name: TRIGGER_TYPE
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/trigger-type']
-    #     - name: TRIGGER_NAME
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/trigger-name']
-    #     - name: TRIGGERED_BY
-    #       valueFrom:
-    #         fieldRef:
-    #           fieldPath: metadata.annotations['devops.cloud.ibm.com/triggered-by']
-    #   command: ["/bin/bash", "-c"]
-    #   args:
-    #     - |
-    #       set -e -o pipefail
-    #       TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
-    #       TOOLCHAIN_REGION=$(jq -r '.region_id' /cd-config/toolchain.json | awk -F: '{print $3}')
-    #       echo "==============================="
-    #       cat /cd-config/toolchain.json | jq .
-    #       echo " "
-    #       echo "==============================="
-    #       echo "TOOLCHAIN_ID=${TOOLCHAIN_ID}" >> ./build.properties
-    #       echo "TOOLCHAIN_REGION=${TOOLCHAIN_REGION}" >> ./build.properties
-    #       echo "PIPELINE_RUN_NAME='${PIPELINE_RUN_NAME}'" >> ./build.properties
-    #       echo "PIPELINE_RUN_ID=${PIPELINE_RUN_ID}" >> ./build.properties
-    #       echo "BUILD_NUMBER=${BUILD_NUMBER}" >> ./build.properties
-    #       echo "PIPELINE_ID=${PIPELINE_ID}" >> ./build.properties
-    #       echo "TRIGGER_TYPE='${TRIGGER_TYPE}'" >> ./build.properties
-    #       echo "TRIGGER_NAME='${TRIGGER_NAME}'" >> ./build.properties
-    #       echo "TRIGGERED_BY='${TRIGGERED_BY}'" >> ./build.properties
-    #       echo "File 'build.properties' appended for passing env variables to subsequent pipeline jobs:"
-    #       cat ./build.properties | grep -v -i password
-    #   volumeMounts:
-    #     - mountPath: /cd-config
-    #       name: cd-config-volume
     - name: publish-build-record
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
@@ -128,10 +51,11 @@ spec:
               name: $(inputs.params.continuous-delivery-context-secret)
               key: API_KEY
               optional: true
-      command: ["/bin/bash", "-c"]
-      args:
-        - |
+      script: |
+          #!/bin/bash
+          set -x
           set -e -o pipefail
+          set -x
           #source ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
@@ -144,7 +68,6 @@ spec:
           BUILD_STATUS=pass
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           ibmcloud login --apikey ${IBM_CLOUD_API_KEY} -a ${IBM_CLOUD_API} --no-region
-          set -x
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
       volumeMounts:
         - mountPath: /cd-config
