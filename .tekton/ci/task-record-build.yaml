@@ -55,8 +55,6 @@ spec:
           #!/bin/bash
           set -x
           set -e -o pipefail
-          set -x
-          #source ./build.properties
           ##########################################################################
           # Setting HOME explicitly to have ibmcloud plugins available
           # doing the export rather than env definition is a workaround
