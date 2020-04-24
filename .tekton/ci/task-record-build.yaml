@@ -66,6 +66,10 @@ spec:
           echo "APP_NAME='${APP_NAME}'" >> ./build.properties
           cat ./build.properties | grep -v -i password
           BUILD_STATUS=pass
+          
+          if [[ "$IBM_CLOUD_API" == *test* ]]; then
+            export IBM_CLOUD_DEVOPS_ENV=dev
+          fi
           export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
           ibmcloud login --apikey ${IBM_CLOUD_API_KEY} -a ${IBM_CLOUD_API} --no-region
           ibmcloud doi publishbuildrecord --logicalappname="${APP_NAME}" --buildnumber=${BUILD_NUMBER} --branch=${GIT_BRANCH} --repositoryurl=${GIT_URL} --commitid=${GIT_COMMIT} --status=${BUILD_STATUS}
