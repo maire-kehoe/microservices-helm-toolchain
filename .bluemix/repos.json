@@ -14,40 +14,40 @@
     },
     "type": "object",
     "properties": {
-        "catalog-api-repo_name": {
+        "catalog-api-repo-name": {
             "type": "string"
         },
-        "catalog-api-repo_url": {
+        "catalog-api-repo-url": {
             "type": "string"
         },
-        "orders-api-repo_name": {
+        "orders-api-repo-name": {
             "type": "string"
         },
-        "orders-api-repo_url": {
+        "orders-api-repo-url": {
             "type": "string"
         },
-        "ui-repo_name": {
+        "ui-repo-name": {
             "type": "string"
         },
-        "ui-repo_url": {
+        "ui-repo-url": {
             "type": "string"
         },
-        "umbrella-repo_name": {
+        "umbrella-repo-name": {
             "type": "string"
         },
-        "umbrella-repo_url": {
+        "umbrella-repo-url": {
             "type": "string"
         }
     },
     "required": [
-        "catalog-api-repo_name",
-        "catalog-api-repo_url",
-        "orders-api-repo_name",
-        "orders-api-repo_url",
-        "ui-repo_name",
-        "ui-repo_url",
-        "umbrella-repo_name",
-        "umbrella-repo_url"
+        "catalog-api-repo-name",
+        "catalog-api-repo-url",
+        "orders-api-repo-name",
+        "orders-api-repo-url",
+        "ui-repo-name",
+        "ui-repo-url",
+        "umbrella-repo-name",
+        "umbrella-repo-url"
     ],
     "form": [
         {
@@ -81,7 +81,7 @@
                 },
                 {
                     "type": "text",
-                    "key": "orders-api-repo_url"
+                    "key": "orders-api-repo-url"
                 },
                 {
                     "type": "icon",
@@ -89,11 +89,11 @@
                 },
                 {
                     "type": "text",
-                    "key": "orders-api-repo_name"
+                    "key": "orders-api-repo-name"
                 },
                 {
                     "type": "text",
-                    "key": "catalog-api-repo_url"
+                    "key": "catalog-api-repo-url"
                 },
                 {
                     "type": "icon",
@@ -101,11 +101,11 @@
                 },
                 {
                     "type": "text",
-                    "key": "catalog-api-repo_name"
+                    "key": "catalog-api-repo-name"
                 },
                 {
                     "type": "text",
-                    "key": "ui-repo_url"
+                    "key": "ui-repo-url"
                 },
                 {
                     "type": "icon",
@@ -113,11 +113,11 @@
                 },
                 {
                     "type": "text",
-                    "key": "ui-repo_name"
+                    "key": "ui-repo-name"
                 },
                 {
                     "type": "text",
-                    "key": "umbrella-repo_url"
+                    "key": "umbrella-repo-url"
                 },
                 {
                     "type": "icon",
@@ -125,7 +125,7 @@
                 },
                 {
                     "type": "text",
-                    "key": "umbrella-repo_name"
+                    "key": "umbrella-repo-name"
                 }
             ]
         }

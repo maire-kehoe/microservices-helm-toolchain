@@ -11,13 +11,13 @@ spec:
     # - name: clusterTargetNamespace     
     - name: deploymentFile
       default: deployment.yml
-    - name: appName
+    - name: app-name
       description: the logical name of the app
-    - name: policyName
+    - name: policy-name
       description: the policy for publishing the app
-    - name: umbrellaRepoName
+    - name: umbrella-repo-name
       description: Umbrella repo name
-    - name: chartRoot
+    - name: chart-root
       value: Component chart root folder
   resources:
     - name: app-image
@@ -56,7 +56,7 @@ spec:
           workspace: pipeline-artifacts
       params:
         - name: app-name
-          value: $(params.appName)
+          value: $(params.app-name)
         - name: toolchain-id
           value: $(tasks.read-toolchain.results.toolchain-id)
         - name: build-number

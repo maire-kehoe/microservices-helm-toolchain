@@ -33,8 +33,8 @@ services:
   catalog-api-repo:
     service_id: hostedgit
     parameters:
-      repo_name: '{{form.hostedgit.parameters.catalog-api-repo_name}}'
-      repo_url: '{{form.hostedgit.parameters.catalog-api-repo_url}}'
+      repo-name: '{{form.hostedgit.parameters.catalog-api-repo-name}}'
+      repo-url: '{{form.hostedgit.parameters.catalog-api-repo-url}}'
       type: clone
       has_issues: false
       enable_traceability: true
@@ -54,20 +54,20 @@ services:
           tekton-pipeline-repo: tekton-pipeline-repo
           tekton-task-repo: tekton-task-repo
           source-repo: catalog-api-repo          
-          POLICY_NAME: '[catalog-api] PUBLISH Component Chart Checks'
-          GIT_BRANCH: master
-          APP_NAME: catalog-api
-          IMAGE_NAME: 'catalog-api-{{timestamp}}'
-          REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
-          REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
-          API_KEY: '{{form.pipeline.parameters.api-key}}'            
-          UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
+          policy-name: '[catalog-api] PUBLISH Component Chart Checks'
+          git-branch: master
+          app-name: catalog-api
+          image-name: 'catalog-api-{{timestamp}}'
+          registry-region-id: '{{form.pipeline.parameters.registry-region}}'
+          registry-namespace: '{{form.pipeline.parameters.registry-namespace}}'
+          api-key: '{{form.pipeline.parameters.api-key}}'            
+          umbrella-repo-name: '{{form.hostedgit.parameters.umbrella-repo-name}}'
         execute: false
   orders-api-repo:
     service_id: hostedgit
     parameters:
-      repo_name: '{{form.hostedgit.parameters.orders-api-repo_name}}'
-      repo_url: '{{form.hostedgit.parameters.orders-api-repo_url}}'
+      repo-name: '{{form.hostedgit.parameters.orders-api-repo-name}}'
+      repo-url: '{{form.hostedgit.parameters.orders-api-repo-url}}'
       type: clone
       has_issues: false
       enable_traceability: true
@@ -90,13 +90,13 @@ services:
           REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'          
-          UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
+          UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo-name}}'
         execute: false
   ui-repo:
     service_id: hostedgit
     parameters:
-      repo_name: '{{form.hostedgit.parameters.ui-repo_name}}'
-      repo_url: '{{form.hostedgit.parameters.ui-repo_url}}'
+      repo-name: '{{form.hostedgit.parameters.ui-repo-name}}'
+      repo-url: '{{form.hostedgit.parameters.ui-repo-url}}'
       type: clone
       has_issues: false
       enable_traceability: true
@@ -121,29 +121,29 @@ services:
           REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'            
-          UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo_name}}'
+          UMBRELLA_REPO_NAME: '{{form.hostedgit.parameters.umbrella-repo-name}}'
         execute: false
   tekton-pipeline-repo:
     service_id: githubconsolidated
     parameters:
-      repo_name: tekton-pipelines
-      repo_url: https://github.com/hmagph/microservices-helm-toolchain
+      repo-name: tekton-pipelines
+      repo-url: https://github.com/hmagph/microservices-helm-toolchain
       type: link
       has_issues: false
       enable_traceability: false
   tekton-task-repo:
     service_id: githubconsolidated
     parameters:
-      repo_name: tekton-catalog
-      repo_url: https://github.com/open-toolchain/tekton-catalog
+      repo-name: tekton-catalog
+      repo-url: https://github.com/open-toolchain/tekton-catalog
       type: link
       has_issues: false
       enable_traceability: false
   umbrella-repo:
     service_id: hostedgit
     parameters:
-      repo_name: '{{form.hostedgit.parameters.umbrella-repo_name}}'
-      repo_url: '{{form.hostedgit.parameters.umbrella-repo_url}}'
+      repo-name: '{{form.hostedgit.parameters.umbrella-repo-name}}'
+      repo-url: '{{form.hostedgit.parameters.umbrella-repo-url}}'
       type: clone
       has_issues: true
       enable_traceability: true
@@ -221,18 +221,18 @@ form:
       staging-cluster-namespace: staging
       prod-space: prod
       prod-cluster-namespace: prod
-      umbrella-app-name: '{{services.umbrella-repo.parameters.repo_name}}'
+      umbrella-app-name: '{{services.umbrella-repo.parameters.repo-name}}'
     schema:
       $ref: deploy.json
   hostedgit:
     parameters:
-      catalog-api-repo_name: 'catalog-api-{{timestamp}}'
-      catalog-api-repo_url: 'https://github.com/open-toolchain/Microservices_CatalogAPI_helm'
-      orders-api-repo_name: 'orders-api-{{timestamp}}'
-      orders-api-repo_url: 'https://github.com/open-toolchain/Microservices_OrdersAPI_helm'
-      ui-repo_name: 'ui-{{timestamp}}'
-      ui-repo_url: 'https://github.com/open-toolchain/Microservices_UI_helm'
-      umbrella-repo_name: 'solution-{{timestamp}}'
-      umbrella-repo_url: 'https://github.com/open-toolchain/Microservices_Solution_helm'
+      catalog-api-repo-name: 'catalog-api-{{timestamp}}'
+      catalog-api-repo-url: 'https://github.com/open-toolchain/Microservices_CatalogAPI_helm'
+      orders-api-repo-name: 'orders-api-{{timestamp}}'
+      orders-api-repo-url: 'https://github.com/open-toolchain/Microservices_OrdersAPI_helm'
+      ui-repo-name: 'ui-{{timestamp}}'
+      ui-repo-url: 'https://github.com/open-toolchain/Microservices_UI_helm'
+      umbrella-repo-name: 'solution-{{timestamp}}'
+      umbrella-repo-url: 'https://github.com/open-toolchain/Microservices_Solution_helm'
     schema:
       $ref: repos.json

@@ -18,34 +18,34 @@ inputs:
 properties:
 - name: apikey
   type: SECURE
-  value: ${API_KEY}
-- name: appName
+  value: ${api-key}
+- name: app-name
   type: TEXT
-  value: ${APP_NAME}
-- name: clusterName
+  value: ${app-name}
+- name: cluster-name
   type: TEXT
   value: mycluster
 - name: branch
   type: TEXT
-  value: ${GIT_BRANCH}
-- name: imageName
+  value: ${git-branch}
+- name: image-name
   type: TEXT
-  value: ${IMAGE_NAME}
+  value: ${image-name}
 - name: repository
   type: TEXT
   value: "" # will be inferred from toolchain introspection
-- name: registryDomain
+- name: registry-domain
   type: TEXT
   value: us.cr.io # ${REGISTRY_REGION_ID}
-- name: registryNamespace
+- name: registry-namespace
   type: TEXT
-  value: ${REGISTRY_NAMESPACE}
-- name: policyName
+  value: ${registry-namespace}
+- name: policy-name
   type: TEXT
-  value: ${POLICY_NAME}
-- name: umbrellaRepoName
+  value: ${policy-name}
+- name: umbrella-repo-name
   type: TEXT
-  value: ${UMBRELLA_REPO_NAME}
+  value: ${umbrella-repo-name}
 triggers:
 - eventListener: event-listener-manual-run
   name: Manual Trigger
