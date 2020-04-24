@@ -84,9 +84,9 @@ spec:
           REPOSITORY_URL=$(jq -r '.services[] | select (.toolchain_binding.name=="'"${REPO_TOOL_INT}"'") | .parameters.repo_url' /cd-config/toolchain.json)
 
           if [[ "$RAW_REGION" == *:ys1:* ]]; then
-            IBM_CLOUD_API="https://test.cloud.ibm.com"
+            IBM_CLOUD_API="test.cloud.ibm.com"
           else
-            IBM_CLOUD_API="https://cloud.ibm.com"
+            IBM_CLOUD_API="cloud.ibm.com"
           fi
 
           # Record task results
