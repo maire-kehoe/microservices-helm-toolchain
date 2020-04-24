@@ -82,6 +82,7 @@ spec:
         - name: toolchain-id
           value: $(tasks.read-toolchain.results.toolchain-id)
         - name: build-number
+          value: $(tasks.read-toolchain.results.build-number)
         - name: ibmcloud-api
           value: $(tasks.read-toolchain.results.ibmcloud-api)
     # - name: containerize
