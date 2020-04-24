@@ -121,7 +121,7 @@ spec:
         - name: GIT_COMMIT
           value: $(inputs.params.commit-id)
         - name: IBM_CLOUD_API
-          value: $(inputs.params.ibmcloudApi)   
+          value: $(inputs.params.ibmcloud-api)   
         - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
