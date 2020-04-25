@@ -88,7 +88,7 @@ spec:
         value: $(inputs.params.pipeline-debug)            
   steps:
     - name: fetch-git-token
-      image: ibmcom/pipeline-base-image:2.6
+      image: ibmcom/pipeline-base-image
       env:
         - name: REPOSITORY
           value: $(inputs.params.repository)
