@@ -7,7 +7,6 @@ spec:
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
-    - name: ibmcloud-api
   results:
     - name: test-status
       description: Test status
