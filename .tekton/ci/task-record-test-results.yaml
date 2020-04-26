@@ -10,6 +10,8 @@ spec:
       description: Toolchain service instance id
     - name: build-number
       description: Pipeline build number
+    - name: test-status
+      description: Test status
     - name: file-locations
       description: Semi-colon separated list of test result file locations
     - name: test-types
