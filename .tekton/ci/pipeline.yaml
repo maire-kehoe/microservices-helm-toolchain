@@ -98,45 +98,51 @@ spec:
           value: $(tasks.unit-test.results.file-locations)
         - name: test-types
           value: $(tasks.unit-test.results.test-types)
-    # - name: containerize
-    #   runAfter: [unit-test]
-    #   taskRef:
-    #     name: cr-build-task
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: pipeline-artifacts
-    #   params:
-    #     - name: additionalTags
-    #       value: 'latest'
-    #     - name: additionalTagsScript
-    #       value: |
-    #         # Include the clone task output variables in the environment
-    #         source /artifacts/build.properties
-    #         # The script is providing tag(s) as output
-    #         # But logs can be written as error stderr
-    #         # echo "Providing an image tag including git branch and commit" >&2
-    #         # Add a specific tag with branch and commit
-    #         # echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
+    - name: containerize
+      runAfter: [record-unit-test-results]
+      taskRef:
+        name: beta-cr-build-task
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-artifacts
+      params:
+        - name: ibmcloud-api
+          value: $(tasks.read-toolchain.results.ibmcloud-api)
+        - name: git-branch
+          value: $(tasks.clone-repo.results.git-branch)
+        - name: git-commit
+          value: $(tasks.clone-repo.results.git-commit)
+        - name: additionalTags
+          value: 'latest'
+        - name: additionalTagsScript
+          value: |
+            # Include the clone task output variables in the environment
+            #source /artifacts/build.properties
+            # The script is providing tag(s) as output
+            # But logs can be written as error stderr
+            # echo "Providing an image tag including git branch and commit" >&2
+            # Add a specific tag with branch and commit
+            # echo "1.0.0-${GIT_BRANCH}-${GIT_COMMIT}"
 
-    #         # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
-    #         # e.g. 3-master-50da6912-20181123114435
-    #         # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
+            # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
+            # e.g. 3-master-50da6912-20181123114435
+            # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
 
-    #         TIMESTAMP=$( date -u "+%Y%m%d%H%M%S")
-    #         IMAGE_TAG=${TIMESTAMP}
-    #         if [ ! -z "${GIT_COMMIT}" ]; then
-    #           GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 ) 
-    #           IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
-    #         fi
-    #         if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
-    #         IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
-    #         # Record image tag
-    #         #echo "IMAGE_TAG=${IMAGE_TAG}" >> /artifacts/build.properties
-    #         echo ${IMAGE_TAG}
-    #   resources:          
-    #     outputs:
-    #       - name: builtImage
-    #         resource: app-image
+            TIMESTAMP=$( date -u "+%Y%m%d%H%M%S")
+            IMAGE_TAG=${TIMESTAMP}
+            if [ ! -z "${GIT_COMMIT}" ]; then
+              GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 ) 
+              IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
+            fi
+            if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
+            IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
+            # Record image tag
+            #echo "IMAGE_TAG=${IMAGE_TAG}" >> /artifacts/build.properties
+            echo ${IMAGE_TAG}
+      resources:          
+        outputs:
+          - name: builtImage
+            resource: app-image
     # - name: check-vulnerabilities
     #   runAfter: [containerize]
     #   taskRef:
