@@ -143,28 +143,28 @@ spec:
         outputs:
           - name: builtImage
             resource: app-image
-    # - name: check-vulnerabilities
-    #   runAfter: [containerize]
-    #   taskRef:
-    #     name: vulnerability-advisor-task
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: pipeline-artifacts
-    #   params:
-    #     - name: scanReportFile
-    #       value: 'app-image-va-report.json'
-    #     # - name: maxIteration
-    #     #   value: '5'
-    #     # - name: sleepTime
-    #     #   value: '3'
-    #     - name: failOnScannedIssues          
-    #       value: 'false'
-    #   resources:          
-    #     inputs:
-    #       - name: image
-    #         resource: app-image
-    #         from:
-    #           - containerize
+    - name: check-vulnerabilities
+      runAfter: [containerize]
+      taskRef:
+        name: beta-vulnerability-advisor-task
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-artifacts
+      params:
+        - name: scan-report-file
+          value: 'app-image-va-report.json'
+        # - name: maxIteration
+        #   value: '5'
+        # - name: sleepTime
+        #   value: '3'
+        - name: fail-on-scanned-issues          
+          value: 'false'
+      resources:          
+        inputs:
+          - name: image
+            resource: app-image
+            from:
+              - containerize
     - name: record-vulnerabilities
       runAfter: [check-vulnerabilities]
       taskRef:
