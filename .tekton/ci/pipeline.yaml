@@ -103,7 +103,7 @@ spec:
       taskRef:
         name: beta-cr-build-task
       workspaces:
-        - name: artifacts
+        - name: workspace
           workspace: pipeline-artifacts
       params:
         - name: ibmcloud-api
@@ -148,7 +148,7 @@ spec:
       taskRef:
         name: beta-vulnerability-advisor-task
       workspaces:
-        - name: artifacts
+        - name: workspace
           workspace: pipeline-artifacts
       params:
         - name: scan-report-file
