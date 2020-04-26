@@ -44,7 +44,6 @@ spec:
           TEST_STATUS=0
           pwd
           ls -al
-          cd ./artifacts
           if [ -f ./tests/run-tests.sh ]; then
             source ./tests/run-tests.sh
           else
