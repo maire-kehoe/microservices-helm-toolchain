@@ -1,0 +1,83 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: record-test--results-task
+spec:
+  params:
+    - name: app-name
+      description: Logical application name for DevOps Insights
+    - name: toolchain-id
+      description: Toolchain service instance id
+    - name: build-number
+      description: Pipeline build number
+    - name: file-locations
+      description: Semi-colon separated list of test result file locations
+    - name: test-types
+      description: Semi-colon separated list of test result types
+    - name: continuous-delivery-context-secret
+      description: name of the configmap containing the continuous delivery pipeline context secrets
+      default: cd-secret
+    - name: ibmcloud-api
+      description: the ibmcloud api
+      default: https://cloud.ibm.com
+  workspaces:
+    - name: artifacts
+      description: the artifacts folder for this task
+      mountPath: /artifacts
+  steps:
+    - name: publish-test-results
+      image: ibmcom/pipeline-base-image
+      workingDir: /artifacts
+      env:
+        - name: APP_NAME
+          value: $(inputs.params.app-name)
+        - name: TOOLCHAIN_ID
+          value: $(inputs.params.toolchain-id)  
+        - name: BUILD_NUMBER
+          value: $(inputs.params.build-number)
+        - name: FILE_LOCATIONS
+          value: $(inputs.params.file-locations) 
+        - name: TEST_TYPES
+          value: $(inputs.params.test-types)   
+        - name: IBM_CLOUD_API
+          value: $(inputs.params.ibmcloud-api)   
+        - name: IBM_CLOUD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: $(inputs.params.continuous-delivery-context-secret)
+              key: API_KEY
+              optional: true
+      script: |
+          #!/bin/bash
+          set -x
+          set -e -o pipefail
+          ##########################################################################
+          # Setting HOME explicitly to have ibmcloud plugins available
+          # doing the export rather than env definition is a workaround
+          # until https://github.com/tektoncd/pipeline/issues/1836 is fixed
+          export HOME="/root"
+          ##########################################################################
+          if [[ "$IBM_CLOUD_API" == *test* ]]; then
+            export IBM_CLOUD_DEVOPS_ENV=dev
+          fi
+          export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
+          ibmcloud login --apikey ${IBM_CLOUD_API_KEY} -a ${IBM_CLOUD_API} --no-region
+          ibmcloud login --apikey $IBM_CLOUD_API_KEY --no-region
+
+          IFS=';' read -ra locations <<< "$FILE_LOCATIONS"
+          IFS=';' read -ra types <<< "$TEST_TYPES"
+          for i in "${!locations[@]}"
+          do
+              echo "$i ${locations[i]} ${types[i]}"
+              ibmcloud doi publishtestrecord --logicalappname="$APP_NAME" --buildnumber=$BUILD_NUMBER --filelocation=${locations[i]} --type=${types[i]}
+          done
+      volumeMounts:
+        - mountPath: /cd-config
+          name: cd-config-volume
+  volumes:
+    - name: cd-config-volume
+      configMap:
+        name: toolchain
+        items:
+          - key: toolchain.json
+            path: toolchain.json

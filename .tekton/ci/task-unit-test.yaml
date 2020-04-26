@@ -4,19 +4,17 @@ metadata:
   name: unit-test-task
 spec:
   params:
-    - name: app-name
-      description: Logical application name for DevOps Insights
-    - name: toolchain-id
-      description: Toolchain service instance id
-    - name: build-number
-      description: Pipeline build number
-    - name: ibmcloud-api
-      description: the ibmcloud api
-      #default: https://cloud.ibm.com
     - name: continuous-delivery-context-secret
       description: name of the configmap containing the continuous delivery pipeline context secrets
       default: cd-secret
     - name: ibmcloud-api
+  results:
+    - name: test-status
+      description: Test status
+    - name: file-locations
+      description: Semi-colon separated list of test result file locations
+    - name: test-types
+      description: Semi-colon separated list of test result types
   workspaces:
     - name: artifacts
       description: the artifacts folder for this task
@@ -26,14 +24,6 @@ spec:
       image: ibmcom/pipeline-base-image
       workingDir: /artifacts
       env:
-        - name: APP_NAME
-          value: $(inputs.params.app-name)
-        - name: TOOLCHAIN_ID
-          value: $(inputs.params.toolchain-id)  
-        - name: BUILD_NUMBER
-          value: $(inputs.params.build-number)
-        - name: IBM_CLOUD_API
-          value: $(inputs.params.ibmcloud-api) 
         - name: IBM_CLOUD_API_KEY
           valueFrom:
             secretKeyRef:
@@ -50,16 +40,18 @@ spec:
           # and until 0.11 - https://ibm.ent.box.com/notes/599948660131?s=rqk76zkkdsz1cenvpw0ad8enxul6j0nv
           export HOME=/root && source ~/.nvm/nvm.sh
           ##########################################################################
-          #source ./build.properties
-          if [[ "$IBM_CLOUD_API" == *test* ]]; then
-            export IBM_CLOUD_DEVOPS_ENV=dev
-          fi
-          export TOOLCHAIN_ID=${TOOLCHAIN_ID} # for doi plugin
+          FILE_LOCATIONS=""
+          TEST_TYPES=""
+          TEST_STATUS=0
           if [ -f ./tests/run-tests.sh ]; then
             source ./tests/run-tests.sh
           else
             echo "Test runner script not found: ./tests/run-tests.sh"
           fi
+          # Record task results
+          echo -n "${TEST_STATUS}" > $(results.test-status.path)
+          echo -n "${FILE_LOCATIONS}" > $(results.file-locations.path)
+          echo -n "${TEST_TYPES}" > $(results.test-types.path)
       volumeMounts:
         - mountPath: /cd-config
           name: cd-config-volume
