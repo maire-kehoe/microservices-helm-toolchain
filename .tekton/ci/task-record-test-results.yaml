@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: record-test--results-task
+  name: record-test-results-task
 spec:
   params:
     - name: app-name

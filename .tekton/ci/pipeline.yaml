@@ -79,7 +79,7 @@ spec:
     - name: record-unit-test-results
       runAfter: [unit-test]
       taskRef:
-        name: record-test--results-task
+        name: record-test-results-task
       workspaces:
         - name: artifacts
           workspace: pipeline-artifacts
@@ -112,9 +112,9 @@ spec:
           value: $(tasks.clone-repo.results.git-branch)
         - name: git-commit
           value: $(tasks.clone-repo.results.git-commit)
-        - name: additionalTags
+        - name: additional-tags
           value: 'latest'
-        - name: additionalTagsScript
+        - name: additional-tags-script
           value: |
             # Include the clone task output variables in the environment
             #source /artifacts/build.properties
@@ -165,16 +165,28 @@ spec:
     #         resource: app-image
     #         from:
     #           - containerize
-    # - name: record-vulnerabilities
-    #   runAfter: [check-vulnerabilities]
-    #   taskRef:
-    #     name: vulnerability-record-task
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: pipeline-artifacts
-    #   params:
-    #     - name: scanReportFile
-    #       value: 'app-image-va-report.json'
+    - name: record-vulnerabilities
+      runAfter: [check-vulnerabilities]
+      taskRef:
+        name: record-test-results-task
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-artifacts
+      params:
+        - name: app-name
+          value: $(params.app-name)
+        - name: toolchain-id
+          value: $(tasks.read-toolchain.results.toolchain-id)
+        - name: build-number
+          value: $(tasks.read-toolchain.results.build-number)
+        - name: ibmcloud-api
+          value: $(tasks.read-toolchain.results.ibmcloud-api)
+        - name: test-status
+          value: $(tasks.unit-test.results.test-status)
+        - name: file-locations
+          value: 'app-image-va-report.json'
+        - name: test-types
+          value: 'vulnerabilityadvisor'
     # - name: publish-component
     #   runAfter: [check-vulnerabilities]
     #   taskRef:
