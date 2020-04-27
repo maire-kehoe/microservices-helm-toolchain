@@ -44,7 +44,7 @@ spec:
         type: image
         params:
           - name: url
-            value: "$(params.registryDomain)/$(params.registryNamespace)/$(params.imageName)"
+            value: "$(params.registry-domain)/$(params.registry-namespace)/$(params.image-name)"
     # - apiVersion: tekton.dev/v1alpha1
     #   kind: PipelineResource
     #   metadata:
