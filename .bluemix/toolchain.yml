@@ -139,21 +139,20 @@ services:
       # source_repo_url: >
       #   $env.type === 'fork' || $env.type === 'clone' ? 
       #     $env.app_repo : 'https://github.com/open-toolchain/hello-containers'
-
       type: link
       has_issues: false
       enable_traceability: false
-  tekton-task-repo:
-    service_id: githubconsolidated
-    parameters:
-      # repo-name: tekton-catalog
-      # source-repo-url: https://github.com/open-toolchain/tekton-catalog
-      repo_name: tekton-catalog
-      repo_url: https://github.com/maire-kehoe/tekton-catalog
-      # source_repo_url: https://github.com/maire-kehoe/tekton-catalog
-      type: link
-      has_issues: false
-      enable_traceability: false
+  # tekton-task-repo:
+  #   service_id: githubconsolidated
+  #   parameters:
+  #     # repo-name: tekton-catalog
+  #     # source-repo-url: https://github.com/open-toolchain/tekton-catalog
+  #     repo_name: tekton-catalog
+  #     repo_url: https://github.com/maire-kehoe/tekton-catalog
+  #     # source_repo_url: https://github.com/maire-kehoe/tekton-catalog
+  #     type: link
+  #     has_issues: false
+  #     enable_traceability: false
   umbrella-repo:
     service_id: hostedgit
     parameters:
