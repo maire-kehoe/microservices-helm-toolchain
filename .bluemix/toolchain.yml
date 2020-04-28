@@ -126,8 +126,20 @@ services:
   tekton-pipeline-repo:
     service_id: githubconsolidated
     parameters:
-      repo-name: tekton-pipelines
-      repo-url: https://github.com/hmagph/microservices-helm-toolchain
+      # repo-name: tekton-pipelines
+      # source-repo-url: https://github.com/hmagph/microservices-helm-toolchain
+      repo_name: tekton-pipelines
+      repo_url: https://github.com/hmagph/microservices-helm-toolchain
+      source_repo_url: https://github.com/hmagph/microservices-helm-toolchain
+
+      # repo_name: 'hello-containers-{{timestamp}}'
+      # repo_url: >
+      #   $env.type === 'link' ? 
+      #     $env.app_repo : 'https://github.com/open-toolchain/hello-containers'
+      # source_repo_url: >
+      #   $env.type === 'fork' || $env.type === 'clone' ? 
+      #     $env.app_repo : 'https://github.com/open-toolchain/hello-containers'
+
       type: link
       has_issues: false
       enable_traceability: false
@@ -135,7 +147,7 @@ services:
     service_id: githubconsolidated
     parameters:
       repo-name: tekton-catalog
-      repo-url: https://github.com/open-toolchain/tekton-catalog
+      source-repo-url: https://github.com/open-toolchain/tekton-catalog
       type: link
       has_issues: false
       enable_traceability: false
